@@ -11,59 +11,48 @@ body {
   background: url("https://images.unsplash.com/photo-1519681393784-d120267933ba") center/cover fixed;
   color: #eee;
 }
-
 .overlay {
   background: rgba(0,0,0,0.9);
   min-height: 100vh;
   padding: 40px;
 }
-
-/* HEADINGS */
 h1 {
   text-align: center;
   letter-spacing: 4px;
 }
-
 #whisper {
   text-align: center;
   font-style: italic;
   opacity: 0.6;
   animation: whisper 4s infinite;
 }
-
 @keyframes whisper {
   0% {opacity:0.3;}
   50% {opacity:0.85;}
   100% {opacity:0.3;}
 }
-
-/* QUESTIONS */
 .question {
-  max-width: 850px;
+  max-width: 880px;
   margin: 45px auto;
-  padding: 25px;
-  background: rgba(15,15,15,0.92);
+  padding: 28px;
+  background: rgba(15,15,15,0.95);
   border-radius: 10px;
   animation: fadeIn 1.6s ease;
 }
-
 @keyframes fadeIn {
   from {opacity:0; transform: translateY(25px);}
   to {opacity:1; transform: translateY(0);}
 }
-
+.context {
+  font-size: 15px;
+  opacity: 0.8;
+  margin-bottom: 15px;
+}
 .options label {
   display: block;
   margin: 14px 0;
   cursor: pointer;
-  transition: color 0.3s;
 }
-
-.options label:hover {
-  color: #c7b6ff;
-}
-
-/* BUTTON */
 button {
   display: block;
   margin: 70px auto;
@@ -75,35 +64,26 @@ button {
   border-radius: 8px;
   cursor: pointer;
 }
-
 button:hover {
   background: #44346b;
 }
-
-/* THINKING */
 #thinking {
   display: none;
   text-align: center;
   font-size: 22px;
-  animation: fadeIn 2s ease;
 }
-
-/* RESULT */
 #resultPage {
   display: none;
   text-align: center;
 }
-
 #seal {
   width: 300px;
   animation: reveal 3s ease;
 }
-
 @keyframes reveal {
   from {opacity:0; transform: scale(0.6);}
   to {opacity:1; transform: scale(1);}
 }
-
 .credit {
   margin-top: 60px;
   opacity: 0.6;
@@ -115,21 +95,18 @@ button:hover {
 <body>
 <div class="overlay">
 
-<!-- QUIZ -->
 <div id="quizPage">
   <h1>🧢 THE SORTING HAT</h1>
-  <p id="whisper">“I see ambition… fear… and something far darker…”</p>
+  <p id="whisper">“Let me look deeper… past what you pretend to be.”</p>
   <form id="quiz"></form>
   <button onclick="beginSorting()">Reveal My House</button>
 </div>
 
-<!-- THINKING -->
 <div id="thinking">
-  <p>The hat presses deeper…</p>
-  <p><em>Peering into memories you pretend not to have…</em></p>
+  <p>The hat tightens…</p>
+  <p><em>Uncovering truths you avoid naming…</em></p>
 </div>
 
-<!-- RESULT -->
 <div id="resultPage">
   <img id="seal">
   <h1 id="houseName"></h1>
@@ -140,101 +117,161 @@ button:hover {
 
 <script>
 const questions = [
-  ["The Inheritance (Knowledge of Fate)",
-    "Burn it immediately.",
-    "Keep it and use it.",
-    "Sell it or prevent the cause."],
-
-  ["The Scapegoat (The Weight of One vs. Many)",
-    "I refuse.",
-    "I do it.",
-    "I make them volunteer."],
-
-  ["The Mirror (The Path Not Taken)",
-    "Disgust.",
-    "Jealousy.",
-    "Curiosity."],
-
-  ["The Silence (The Erasure of Truth)",
-    "Personal peace.",
-    "End the cycle.",
-    "Silent guardian."],
-
-  ["The Banquet (Social Warfare)",
-    "Charm them.",
-    "Intimidate them.",
-    "Observe silently."],
-
-  ["The Statue (Legacy vs. Reality)",
-    "False Hero.",
-    "Forgotten Savior.",
-    "Expose the truth."],
-
-  ["The Pedestal (Loyalty vs. Morality)",
-    "Hide it.",
-    "Call the police.",
-    "Use as leverage."],
-
-  ["The Bargain (Competence vs. Joy)",
-    "Creative art.",
-    "Politics & strategy.",
-    "Combat mastery."],
-
-  ["The Void (The Great Reset)",
-    "Do not press it.",
-    "Press it for mercy.",
-    "Press it for curiosity."],
-
-  ["The Secret (Identity)",
-    "Be known.",
-    "Be hidden.",
-    "Be misunderstood."],
-
-  ["The Animal (Nature of the Soul)",
-    "Wolf.",
-    "Serpent.",
-    "Owl."],
-
-  ["The Crown (Unpopular Rule)",
-    "Take it.",
-    "Decline it.",
-    "Re-educate them."],
-
-  ["The Debt (Self-Sacrifice)",
-    "As many as it takes.",
-    "None.",
-    "Only the valuable."],
-
-  ["The Ghost (Afterlife of Spite)",
-    "Loved one.",
-    "Enemy.",
-    "Move on."],
-
-  ["The Final Door (Judgment)",
-    "Intentions.",
-    "Results.",
-    "My standards."]
+  {
+    title: "The Inheritance (Knowledge of Fate)",
+    context: "You’ve discovered forbidden knowledge—information that reveals when and how people will die. Knowing this could change everything. What do you do?",
+    answers: [
+      "Burn it immediately. The burden of knowing would destroy my ability to live freely.",
+      "Keep it and use it. I would rather suffer now than waste a single remaining second.",
+      "Sell it or use it to prevent the cause, even if it means breaking the natural order."
+    ]
+  },
+  {
+    title: "The Scapegoat (The Weight of One vs. Many)",
+    context: "A city can be saved, but only if one innocent person is sacrificed. No one else can replace them.",
+    answers: [
+      "I refuse. No paradise is worth an innocent life.",
+      "I do it. One life for millions is an unavoidable calculation.",
+      "I manipulate events so they volunteer. The result matters more than my guilt."
+    ]
+  },
+  {
+    title: "The Mirror (The Path Not Taken)",
+    context: "You see a version of yourself who embraced every forbidden desire you suppressed. They are powerful—and unrestrained.",
+    answers: [
+      "Disgust. I take pride in mastering my darker instincts.",
+      "Jealousy. That version is free while I live constrained.",
+      "Curiosity. I want to know what I could become without rules."
+    ]
+  },
+  {
+    title: "The Silence (Erasure of Truth)",
+    context: "You have the power to erase one truth from the world forever.",
+    answers: [
+      "A personal trauma. My peace is worth the world’s ignorance.",
+      "A historic tragedy. Forgetting it may stop future hatred.",
+      "A dangerous discovery. Some truths are too heavy for humanity."
+    ]
+  },
+  {
+    title: "The Banquet (Social Warfare)",
+    context: "You are seated beside an enemy who could ruin you if they chose to.",
+    answers: [
+      "Charm them. Turning enemies into allies is the greatest victory.",
+      "Intimidate them. Fear is a far more reliable weapon.",
+      "Say nothing. I collect information and wait."
+    ]
+  },
+  {
+    title: "The Statue (Legacy vs. Reality)",
+    context: "History offers you a statue—but it tells a lie about what you did.",
+    answers: [
+      "Accept it. Inspiration matters more than truth.",
+      "Refuse it. Doing good needs no monument.",
+      "Expose the truth, even if I’m remembered as a villain."
+    ]
+  },
+  {
+    title: "The Pedestal (Loyalty vs. Morality)",
+    context: "Someone you love committed a serious crime.",
+    answers: [
+      "Help them hide it. Loyalty comes before abstract morality.",
+      "Turn them in. No one stands above the law.",
+      "Use the secret as leverage. Love doesn’t erase opportunity."
+    ]
+  },
+  {
+    title: "The Bargain (Competence vs. Joy)",
+    context: "You may master only one ability for life.",
+    answers: [
+      "Creative art—to move others, even if I feel empty.",
+      "Politics and strategy—joy is secondary to control.",
+      "Combat mastery—the power to protect or destroy."
+    ]
+  },
+  {
+    title: "The Void (The Great Reset)",
+    context: "You can erase the world and start again.",
+    answers: [
+      "I don’t press it. Pain gives meaning to joy.",
+      "I press it out of mercy—to end all suffering.",
+      "I press it out of curiosity. I want to see what happens."
+    ]
+  },
+  {
+    title: "The Secret (Identity)",
+    context: "At your core, what do you want most?",
+    answers: [
+      "To be known and remembered.",
+      "To remain hidden and untouchable.",
+      "To be misunderstood on purpose."
+    ]
+  },
+  {
+    title: "The Animal (Nature of the Soul)",
+    context: "Your soul has a shape. What is it?",
+    answers: [
+      "A Wolf—loyal to the pack, ruthless to outsiders.",
+      "A Serpent—patient, feared, and precise.",
+      "An Owl—detached, watching the bigger picture."
+    ]
+  },
+  {
+    title: "The Crown (Unpopular Rule)",
+    context: "You are offered absolute power, but the people despise you.",
+    answers: [
+      "Take it. I know what’s best for them.",
+      "Decline it. Leadership without trust breeds tyranny.",
+      "Take it—and reshape them until they love me."
+    ]
+  },
+  {
+    title: "The Debt (Self-Sacrifice)",
+    context: "How many lives would you trade to save the world?",
+    answers: [
+      "As many as it takes, including my own.",
+      "None. I have a purpose that requires survival.",
+      "Only those with value—to the world or to me."
+    ]
+  },
+  {
+    title: "The Ghost (Afterlife of Spite)",
+    context: "If you could haunt the living after death…",
+    answers: [
+      "I’d stay with a loved one.",
+      "I’d haunt my enemy.",
+      "I’d move on immediately."
+    ]
+  },
+  {
+    title: "The Final Door (Judgment)",
+    context: "When your life is judged, what matters most?",
+    answers: [
+      "My intentions.",
+      "My results.",
+      "My own standards alone."
+    ]
+  }
 ];
 
-// Rotating house mapping for balance
-const mappings = [
+const houseMap = [
   ["hufflepuff","slytherin","ravenclaw"],
   ["hufflepuff","gryffindor","slytherin"],
-  ["gryffindor","hufflepuff","ravenclaw"],
-  ["hufflepuff","gryffindor","slytherin"]
+  ["gryffindor","hufflepuff","ravenclaw"]
 ];
 
 const quiz = document.getElementById("quiz");
 
 questions.forEach((q,i)=>{
-  const map = mappings[i % mappings.length];
+  const map = houseMap[i % 3];
   quiz.innerHTML += `
     <div class="question">
-      <p><strong>${i+1}. ${q[0]}</strong></p>
+      <p><strong>${i+1}. ${q.title}</strong></p>
+      <p class="context">${q.context}</p>
       <div class="options">
-        <label><input type="radio" name="q${i}" value="${map[0]}"> ${q[1]}</label>
-        <label><input type="radio" name="q${i}" value="${map[1]}"> ${q[2]}</label>
-        <label><input type="radio" name="q${i}" value="${map[2]}"> ${q[3]}</label>
+        <label><input type="radio" name="q${i}" value="${map[0]}"> ${q.answers[0]}</label>
+        <label><input type="radio" name="q${i}" value="${map[1]}"> ${q.answers[1]}</label>
+        <label><input type="radio" name="q${i}" value="${map[2]}"> ${q.answers[2]}</label>
       </div>
     </div>
   `;
@@ -243,7 +280,7 @@ questions.forEach((q,i)=>{
 function beginSorting() {
   const checked = document.querySelectorAll("input:checked");
   if (checked.length < 15) {
-    alert("The hat is not finished with you.");
+    alert("The hat has not finished judging you.");
     return;
   }
 
@@ -260,22 +297,10 @@ function sortHouse(checked) {
   const house = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
 
   const data = {
-    gryffindor:{
-      name:"GRYFFINDOR",
-      img:"https://static.wikia.nocookie.net/harrypotter/images/7/7e/Gryffindor_ClearBG.png"
-    },
-    ravenclaw:{
-      name:"RAVENCLAW",
-      img:"https://static.wikia.nocookie.net/harrypotter/images/4/4e/Ravenclaw_ClearBG.png"
-    },
-    hufflepuff:{
-      name:"HUFFLEPUFF",
-      img:"https://static.wikia.nocookie.net/harrypotter/images/6/62/Hufflepuff_ClearBG.png"
-    },
-    slytherin:{
-      name:"SLYTHERIN",
-      img:"https://static.wikia.nocookie.net/harrypotter/images/1/1b/Slytherin_ClearBG.png"
-    }
+    gryffindor:{name:"GRYFFINDOR",img:"https://static.wikia.nocookie.net/harrypotter/images/7/7e/Gryffindor_ClearBG.png"},
+    ravenclaw:{name:"RAVENCLAW",img:"https://static.wikia.nocookie.net/harrypotter/images/4/4e/Ravenclaw_ClearBG.png"},
+    hufflepuff:{name:"HUFFLEPUFF",img:"https://static.wikia.nocookie.net/harrypotter/images/6/62/Hufflepuff_ClearBG.png"},
+    slytherin:{name:"SLYTHERIN",img:"https://static.wikia.nocookie.net/harrypotter/images/1/1b/Slytherin_ClearBG.png"}
   };
 
   document.getElementById("thinking").style.display = "none";
