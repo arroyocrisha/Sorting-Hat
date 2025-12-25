@@ -5,70 +5,114 @@
 <title>The Sorting Hat</title>
 
 <style>
+/* GLOBAL */
 body {
   margin: 0;
   font-family: "Georgia", serif;
-  background: url("https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d") no-repeat center center fixed;
-  background-size: cover;
-  color: #f2f2f2;
+  background: url("https://images.unsplash.com/photo-1524995997946-a1c2e315a42f") center/cover fixed;
+  color: #f3f3f3;
+  overflow-x: hidden;
 }
 
 .overlay {
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0,0,0,0.88);
   min-height: 100vh;
-  padding: 30px;
+  padding: 40px;
+}
+
+/* QUIZ */
+#quizPage {
+  display: block;
 }
 
 h1 {
   text-align: center;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
+}
+
+#whisper {
+  text-align: center;
+  font-style: italic;
+  opacity: 0.6;
+  animation: whisper 4s infinite;
+}
+
+@keyframes whisper {
+  0% {opacity:0.3;}
+  50% {opacity:0.8;}
+  100% {opacity:0.3;}
 }
 
 .question {
-  margin: 30px auto;
-  max-width: 800px;
-  padding: 20px;
-  background: rgba(30,30,30,0.9);
-  border-radius: 8px;
+  max-width: 760px;
+  margin: 45px auto;
+  padding: 25px;
+  background: rgba(20,20,20,0.9);
+  border-radius: 10px;
+  animation: fadeIn 1.8s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(30px);}
+  to {opacity:1; transform: translateY(0);}
 }
 
 .options label {
   display: block;
-  margin: 8px 0;
+  margin: 12px 0;
   cursor: pointer;
+  transition: color 0.3s;
+}
+
+.options label:hover {
+  color: #c7b6ff;
 }
 
 button {
   display: block;
-  margin: 40px auto;
-  padding: 14px 30px;
+  margin: 70px auto;
+  padding: 16px 40px;
   font-size: 18px;
-  background: #7b5cff;
-  color: #fff;
+  background: #5e4b8b;
   border: none;
-  border-radius: 6px;
+  color: white;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 button:hover {
-  background: #5f45cc;
+  background: #46356e;
 }
 
-#result {
+/* THINKING SCREEN */
+#thinking {
   display: none;
   text-align: center;
-  margin-top: 60px;
+  font-size: 22px;
+  animation: fadeIn 2s ease;
 }
 
-#result img {
-  width: 180px;
-  margin-top: 20px;
+/* RESULT PAGE */
+#resultPage {
+  display: none;
+  text-align: center;
+  animation: fadeIn 3s ease;
+}
+
+#seal {
+  width: 280px;
+  animation: reveal 3s ease;
+}
+
+@keyframes reveal {
+  from {opacity:0; transform: scale(0.5);}
+  to {opacity:1; transform: scale(1);}
 }
 
 .credit {
-  margin-top: 50px;
+  margin-top: 60px;
   font-size: 14px;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 </style>
 </head>
@@ -76,73 +120,24 @@ button:hover {
 <body>
 <div class="overlay">
 
-<h1>🧢 THE SORTING HAT</h1>
-<p style="text-align:center;">Answer honestly. The hat listens when you don’t.</p>
+<!-- QUIZ PAGE -->
+<div id="quizPage">
+  <h1>🧢 THE SORTING HAT</h1>
+  <p id="whisper">“Hmm… difficult. Very difficult…”</p>
+  <form id="quiz"></form>
+  <button onclick="beginSorting()">Reveal My House</button>
+</div>
 
-<form id="quiz">
+<!-- THINKING -->
+<div id="thinking">
+  <p>The hat is searching your mind…</p>
+  <p><em>Peering into the darkest corners of your heart…</em></p>
+</div>
 
-<script>
-const questions = [
-  "What are your thoughts on murder?",
-  "Power without accountability is...",
-  "If loyalty conflicts with ambition, you choose...",
-  "You find out someone betrayed you.",
-  "Rules exist to be...",
-  "You are offered forbidden knowledge.",
-  "What scares you most?",
-  "If someone stands in your way...",
-  "Your greatest strength is...",
-  "You value reputation or truth?",
-  "Would you sacrifice one to save many?",
-  "People are mostly...",
-  "How do you react to humiliation?",
-  "If you lose everything, you...",
-  "Deep down, you want to be remembered as..."
-];
-
-const answers = [
-  ["Unforgivable", "Context matters", "Protect loved ones", "Sometimes necessary"],
-  ["Dangerous", "Inevitable", "Cruel", "Essential"],
-  ["Loyalty", "Balance", "Loyalty always", "Ambition"],
-  ["Confront them", "Analyze quietly", "Forgive", "Plot revenge"],
-  ["Broken", "Necessary", "Protective", "Tools"],
-  ["Refuse it", "Study it", "Lock it away", "Use it"],
-  ["Being powerless", "Being wrong", "Being alone", "Being forgotten"],
-  ["Face them", "Outthink them", "Avoid conflict", "Remove them"],
-  ["Bravery", "Intellect", "Compassion", "Ambition"],
-  ["Truth", "Truth", "Reputation", "Reputation"],
-  ["No", "Depends", "Yes, painfully", "Yes"],
-  ["Good", "Neutral", "Good-hearted", "Selfish"],
-  ["Confront", "Strategize", "Endure", "Retaliate"],
-  ["Rebuild", "Learn", "Lean on others", "Rise stronger"],
-  ["Brave", "Wise", "Kind", "Powerful"]
-];
-
-const houses = ["gryffindor","ravenclaw","hufflepuff","slytherin"];
-
-document.write(
-  questions.map((q, i) => `
-    <div class="question">
-      <p><strong>${i+1}. ${q}</strong></p>
-      <div class="options">
-        ${answers[i].map((a,j)=>`
-          <label>
-            <input type="radio" name="q${i}" value="${houses[j]}" />
-            ${a}
-          </label>
-        `).join("")}
-      </div>
-    </div>
-  `).join("")
-);
-</script>
-
-<button type="button" onclick="sortHouse()">Reveal My House</button>
-</form>
-
-<div id="result">
-  <h2 id="houseName"></h2>
-  <img id="houseImg" />
+<!-- RESULT PAGE -->
+<div id="resultPage">
+  <img id="seal">
+  <h1 id="houseName"></h1>
   <p id="houseDesc"></p>
   <div class="credit">by ccarroyo</div>
 </div>
@@ -150,46 +145,109 @@ document.write(
 </div>
 
 <script>
-function sortHouse() {
-  const score = {gryffindor:0, ravenclaw:0, hufflepuff:0, slytherin:0};
-  const checked = document.querySelectorAll("input[type='radio']:checked");
+const questions = [
+  "What are your thoughts on murder?",
+  "Which truth frightens you most?",
+  "If loyalty blocks your future, you would…",
+  "Someone humiliates you publicly.",
+  "Do you believe power corrupts?",
+  "Which sin is most forgivable?",
+  "Would you sacrifice one to save many?",
+  "What is worse than death?",
+  "How do you treat forbidden knowledge?",
+  "When betrayed, you…",
+  "Rules exist to be…",
+  "What drives you in silence?",
+  "Do you trust your instincts?",
+  "What would you erase?",
+  "How should history remember you?"
+];
 
+const answers = [
+  ["Never justified","Context matters","Protect loved ones","Necessary"],
+  ["Weakness","Ignorance","Loneliness","Irrelevance"],
+  ["Choose loyalty","Balance both","Stay loyal","Choose future"],
+  ["Confront","Outthink","Endure","Retaliate"],
+  ["Always","Sometimes","Rarely","Never"],
+  ["Pride","Curiosity","Fear","Ambition"],
+  ["No","Depends","Yes","Without hesitation"],
+  ["Failure","Ignorance","Loneliness","Irrelevance"],
+  ["Reject it","Study it","Hide it","Use it"],
+  ["Confront","Observe","Forgive","Plan revenge"],
+  ["Broken","Necessary","Protective","Tools"],
+  ["Honor","Knowledge","Love","Victory"],
+  ["Yes","Mostly","Sometimes","Always"],
+  ["My mistake","My doubt","My pain","My weakness"],
+  ["Brave","Wise","Kind","Powerful"]
+];
+
+const houses = ["gryffindor","ravenclaw","hufflepuff","slytherin"];
+const quiz = document.getElementById("quiz");
+
+questions.forEach((q,i)=>{
+  quiz.innerHTML += `
+    <div class="question">
+      <p><strong>${i+1}. ${q}</strong></p>
+      <div class="options">
+        ${answers[i].map((a,j)=>`
+          <label>
+            <input type="radio" name="q${i}" value="${houses[j]}"> ${a}
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `;
+});
+
+function beginSorting() {
+  const checked = document.querySelectorAll("input:checked");
   if (checked.length < 15) {
-    alert("The Sorting Hat requires all answers.");
+    alert("The Sorting Hat is not finished listening.");
     return;
   }
 
+  document.getElementById("quizPage").style.display = "none";
+  document.getElementById("thinking").style.display = "block";
+
+  setTimeout(() => {
+    sortHouse(checked);
+  }, 3500);
+}
+
+function sortHouse(checked) {
+  const score = {gryffindor:0,ravenclaw:0,hufflepuff:0,slytherin:0};
   checked.forEach(a => score[a.value]++);
 
   const house = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
 
   const data = {
-    gryffindor: {
-      name: "🦁 GRYFFINDOR",
-      img: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Gryffindor_Crest.png",
-      desc: "Bold, reckless, and ruled by courage."
+    gryffindor:{
+      name:"🦁 GRYFFINDOR",
+      img:"https://upload.wikimedia.org/wikipedia/commons/7/7e/Gryffindor_Crest.png",
+      desc:"Courage burns louder than fear."
     },
-    ravenclaw: {
-      name: "🦅 RAVENCLAW",
-      img: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Ravenclaw_Crest.png",
-      desc: "Intelligent, observant, and quietly dangerous."
+    ravenclaw:{
+      name:"🦅 RAVENCLAW",
+      img:"https://upload.wikimedia.org/wikipedia/commons/4/4e/Ravenclaw_Crest.png",
+      desc:"Your mind sees what others miss."
     },
-    hufflepuff: {
-      name: "🦡 HUFFLEPUFF",
-      img: "https://upload.wikimedia.org/wikipedia/commons/6/62/Hufflepuff_Crest.png",
-      desc: "Loyal, moral, and stronger than people assume."
+    hufflepuff:{
+      name:"🦡 HUFFLEPUFF",
+      img:"https://upload.wikimedia.org/wikipedia/commons/6/62/Hufflepuff_Crest.png",
+      desc:"Your strength is quiet but unbreakable."
     },
-    slytherin: {
-      name: "🐍 SLYTHERIN",
-      img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Slytherin_Crest.png",
-      desc: "Ambitious, strategic, and unafraid of desire."
+    slytherin:{
+      name:"🐍 SLYTHERIN",
+      img:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Slytherin_Crest.png",
+      desc:"You do not fear desire—you master it."
     }
   };
 
+  document.getElementById("thinking").style.display = "none";
+  document.getElementById("resultPage").style.display = "block";
+  document.getElementById("seal").src = data[house].img;
   document.getElementById("houseName").innerText = data[house].name;
-  document.getElementById("houseImg").src = data[house].img;
   document.getElementById("houseDesc").innerText = data[house].desc;
-  document.getElementById("result").style.display = "block";
 }
 </script>
 
