@@ -63,4 +63,90 @@
   </div>
 
   <!-- Question 2 -->
-  <div class="question
+  <div class="question">
+    <p><strong>2. You find a diary that can ruin someone’s life.</strong></p>
+    <div class="options">
+      <label><input type="radio" name="q2" value="gryffindor"> Destroy it</label>
+      <label><input type="radio" name="q2" value="ravenclaw"> Read it first</label>
+      <label><input type="radio" name="q2" value="hufflepuff"> Protect it, never use it</label>
+      <label><input type="radio" name="q2" value="slytherin"> Save it for later</label>
+    </div>
+  </div>
+
+  <!-- Question 3 -->
+  <div class="question">
+    <p><strong>3. Which would you rather be?</strong></p>
+    <div class="options">
+      <label><input type="radio" name="q3" value="gryffindor"> Feared</label>
+      <label><input type="radio" name="q3" value="ravenclaw"> Remembered for intelligence</label>
+      <label><input type="radio" name="q3" value="hufflepuff"> Remembered for kindness</label>
+      <label><input type="radio" name="q3" value="slytherin"> Feared and respected</label>
+    </div>
+  </div>
+
+  <!-- Question 4 -->
+  <div class="question">
+    <p><strong>4. Someone humiliates you publicly.</strong></p>
+    <div class="options">
+      <label><input type="radio" name="q4" value="gryffindor"> Confront them</label>
+      <label><input type="radio" name="q4" value="ravenclaw"> Outsmart them later</label>
+      <label><input type="radio" name="q4" value="hufflepuff"> Walk away</label>
+      <label><input type="radio" name="q4" value="slytherin"> Make them regret it</label>
+    </div>
+  </div>
+
+  <!-- Question 5 -->
+  <div class="question">
+    <p><strong>5. Deep down, what drives you?</strong></p>
+    <div class="options">
+      <label><input type="radio" name="q5" value="gryffindor"> Proving myself</label>
+      <label><input type="radio" name="q5" value="ravenclaw"> Understanding everything</label>
+      <label><input type="radio" name="q5" value="hufflepuff"> Protecting others</label>
+      <label><input type="radio" name="q5" value="slytherin"> Winning</label>
+    </div>
+  </div>
+
+  <button type="button" onclick="sortHouse()">Reveal My House</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+  function sortHouse() {
+    const scores = {
+      gryffindor: 0,
+      ravenclaw: 0,
+      hufflepuff: 0,
+      slytherin: 0
+    };
+
+    const answers = document.querySelectorAll("input[type='radio']:checked");
+
+    if (answers.length < 5) {
+      alert("The Sorting Hat needs all answers...");
+      return;
+    }
+
+    answers.forEach(answer => {
+      scores[answer.value]++;
+    });
+
+    let house = Object.keys(scores).reduce((a, b) =>
+      scores[a] > scores[b] ? a : b
+    );
+
+    const descriptions = {
+      gryffindor: "🦁 Gryffindor — Bold, impulsive, and unafraid of consequences.",
+      ravenclaw: "🦅 Ravenclaw — Thoughtful, curious, and dangerously perceptive.",
+      hufflepuff: "🦡 Hufflepuff — Loyal, moral, and quietly strong.",
+      slytherin: "🐍 Slytherin — Strategic, ambitious, and unashamed of desire."
+    };
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = `<h2>${descriptions[house]}</h2><p>The hat has decided.</p>`;
+  }
+</script>
+
+</body>
+</html
