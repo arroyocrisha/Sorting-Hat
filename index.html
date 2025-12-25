@@ -55,8 +55,8 @@ h1 {
 }
 button {
   display: block;
-  margin: 70px auto;
-  padding: 16px 42px;
+  margin: 50px auto;
+  padding: 14px 36px;
   font-size: 18px;
   background: #5b4a87;
   border: none;
@@ -84,8 +84,18 @@ button:hover {
   from {opacity:0; transform: scale(0.6);}
   to {opacity:1; transform: scale(1);}
 }
+#houseEmoji {
+  font-size: 90px;
+  margin-top: 20px;
+}
+#houseDesc {
+  max-width: 700px;
+  margin: 20px auto;
+  font-size: 18px;
+  line-height: 1.5;
+}
 .credit {
-  margin-top: 60px;
+  margin-top: 40px;
   opacity: 0.6;
   font-size: 14px;
 }
@@ -108,8 +118,10 @@ button:hover {
 </div>
 
 <div id="resultPage">
+  <div id="houseEmoji"></div>
   <img id="seal">
-  <h1 id="houseName"></h1>
+  <div id="houseDesc"></div>
+  <button onclick="resetTest()">Take the Test Again</button>
   <div class="credit">by ccarroyo</div>
 </div>
 
@@ -262,6 +274,7 @@ const houseMap = [
 
 const quiz = document.getElementById("quiz");
 
+// Render questions
 questions.forEach((q,i)=>{
   const map = houseMap[i % 3];
   quiz.innerHTML += `
@@ -280,13 +293,11 @@ questions.forEach((q,i)=>{
 function beginSorting() {
   const checked = document.querySelectorAll("input:checked");
   if (checked.length < 15) {
-    alert("The hat has not finished judging you.");
+    alert("The hat is not finished with you.");
     return;
   }
-
   document.getElementById("quizPage").style.display = "none";
   document.getElementById("thinking").style.display = "block";
-
   setTimeout(() => sortHouse(checked), 3500);
 }
 
@@ -294,19 +305,43 @@ function sortHouse(checked) {
   const score = {gryffindor:0,ravenclaw:0,hufflepuff:0,slytherin:0};
   checked.forEach(a => score[a.value]++);
 
-  const house = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
+  const house = Object.keys(score).reduce((a,b)=>score[a]>=score[b]?a:b);
 
   const data = {
-    gryffindor:{name:"GRYFFINDOR",img:"https://static.wikia.nocookie.net/harrypotter/images/7/7e/Gryffindor_ClearBG.png"},
-    ravenclaw:{name:"RAVENCLAW",img:"https://static.wikia.nocookie.net/harrypotter/images/4/4e/Ravenclaw_ClearBG.png"},
-    hufflepuff:{name:"HUFFLEPUFF",img:"https://static.wikia.nocookie.net/harrypotter/images/6/62/Hufflepuff_ClearBG.png"},
-    slytherin:{name:"SLYTHERIN",img:"https://static.wikia.nocookie.net/harrypotter/images/1/1b/Slytherin_ClearBG.png"}
+    gryffindor:{
+      emoji:"🦁",
+      img:"https://static.wikia.nocookie.net/harrypotter/images/7/7e/Gryffindor_ClearBG.png",
+      desc:"Courage drives you forward. You act from the heart, willing to face danger for your beliefs. You thrive when challenged and seek honor in action."
+    },
+    ravenclaw:{
+      emoji:"🦅",
+      img:"https://static.wikia.nocookie.net/harrypotter/images/4/4e/Ravenclaw_ClearBG.png",
+      desc:"Wisdom and curiosity guide your choices. You analyze deeply and prefer knowledge over impulse. Insight and strategy define your path."
+    },
+    hufflepuff:{
+      emoji:"🦡",
+      img:"https://static.wikia.nocookie.net/harrypotter/images/6/62/Hufflepuff_ClearBG.png",
+      desc:"Loyalty and patience are your strengths. You value fairness, hard work, and empathy. Others trust you and you act for the collective good."
+    },
+    slytherin:{
+      emoji:"🐍",
+      img:"https://static.wikia.nocookie.net/harrypotter/images/1/1b/Slytherin_ClearBG.png",
+      desc:"Ambition and cunning guide your path. You think strategically, seize opportunities, and are unafraid to bend rules to achieve your goals."
+    }
   };
 
   document.getElementById("thinking").style.display = "none";
   document.getElementById("resultPage").style.display = "block";
+  document.getElementById("houseEmoji").innerText = data[house].emoji;
   document.getElementById("seal").src = data[house].img;
-  document.getElementById("houseName").innerText = data[house].name;
+  document.getElementById("houseDesc").innerText = data[house].desc;
+}
+
+function resetTest() {
+  document.getElementById("resultPage").style.display = "none";
+  document.getElementById("quizPage").style.display = "block";
+  document.getElementById("quiz").reset();
+  window.scrollTo(0,0);
 }
 </script>
 
