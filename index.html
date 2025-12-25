@@ -8,51 +8,40 @@
 body {
   margin: 0;
   font-family: "Georgia", serif;
-  background: url("https://images.unsplash.com/photo-1519681393784-d120267933ba") center/cover fixed;
+  background: url("https://images.unsplash.com/photo-1506466010722-395aa2bef877") center/cover fixed;
   color: #eee;
 }
 .overlay {
-  background: rgba(0,0,0,0.92);
+  background: rgba(0,0,0,0.94);
   min-height: 100vh;
   padding: 40px;
 }
-h1 {
-  text-align: center;
-  letter-spacing: 4px;
-}
+h1 { text-align: center; letter-spacing: 4px; }
+
 #whisper {
   text-align: center;
   font-style: italic;
-  opacity: 0.6;
-  animation: whisper 4s infinite;
+  opacity: 0.7;
 }
-@keyframes whisper {
-  0% {opacity:0.3;}
-  50% {opacity:0.85;}
-  100% {opacity:0.3;}
-}
+
 .question {
   max-width: 900px;
   margin: 45px auto;
   padding: 28px;
-  background: rgba(15,15,15,0.95);
+  background: rgba(18,18,18,0.96);
   border-radius: 10px;
-  animation: fadeIn 1.4s ease;
-}
-@keyframes fadeIn {
-  from {opacity:0; transform: translateY(25px);}
-  to {opacity:1; transform: translateY(0);}
 }
 .context {
   font-size: 15px;
-  opacity: 0.8;
-  margin-bottom: 15px;
+  opacity: 0.9;
+  min-height: 50px;
 }
 .options label {
   display: block;
   margin: 14px 0;
   cursor: pointer;
 }
+
 button {
   display: block;
   margin: 50px auto;
@@ -64,40 +53,14 @@ button {
   border-radius: 8px;
   cursor: pointer;
 }
-button:hover {
-  background: #44346b;
-}
-#thinking {
-  display: none;
-  text-align: center;
-  font-size: 22px;
-}
-#resultPage {
-  display: none;
-  text-align: center;
-}
-#houseEmoji {
-  font-size: 90px;
-  margin-top: 20px;
-}
-#houseName {
-  font-size: 42px;
-  letter-spacing: 4px;
-  margin: 10px 0 30px;
-}
-#houseDesc {
-  max-width: 900px;
-  margin: auto;
-  text-align: left;
-}
-#houseDesc ul {
-  line-height: 1.6;
-}
-.credit {
-  margin-top: 50px;
-  opacity: 0.6;
-  font-size: 14px;
-}
+button:hover { background: #44346b; }
+
+#thinking, #resultPage { display: none; text-align: center; }
+#houseEmoji { font-size: 90px; }
+#houseName { font-size: 42px; letter-spacing: 4px; }
+#percentages { margin: 25px 0; }
+#houseDesc { max-width: 900px; margin: auto; text-align: left; }
+.credit { margin-top: 40px; opacity: 0.6; }
 </style>
 </head>
 
@@ -105,204 +68,165 @@ button:hover {
 <div class="overlay">
 
 <div id="quizPage">
-  <h1>🧢 THE SORTING HAT</h1>
-  <p id="whisper">“I see what you justify. I see what you deny.”</p>
-  <form id="quiz"></form>
-  <button onclick="beginSorting()">Reveal My House</button>
+<h1>🧢 THE SORTING HAT</h1>
+<p id="whisper">“I am not interested in who you claim to be.”</p>
+<form id="quiz"></form>
+<button onclick="beginSorting()">Reveal My House</button>
 </div>
 
 <div id="thinking">
-  <p>The hat tightens around your thoughts…</p>
-  <p><em>Searching the darkest justifications of your heart…</em></p>
+<p id="thinkingText"></p>
 </div>
 
 <div id="resultPage">
-  <div id="houseEmoji"></div>
-  <div id="houseName"></div>
-  <div id="houseDesc"></div>
-  <button onclick="resetTest()">Take the Test Again</button>
-  <div class="credit">by ccarroyo</div>
+<div id="houseEmoji"></div>
+<div id="houseName"></div>
+<div id="percentages"></div>
+<div id="houseDesc"></div>
+<button onclick="resetTest()">Take the Test Again</button>
+<div class="credit">by ccarroyo</div>
 </div>
 
 </div>
 
 <script>
 const questions = [
-  {
-    title: "The Inheritance (Knowledge of Fate)",
-    context: "You’ve found forbidden knowledge that reveals how and when people die. This truth cannot be unseen.",
-    answers: [
-      "Burn it immediately. Some knowledge destroys the soul.",
-      "Keep it and use it. Preparation is better than ignorance.",
-      "Sell it or prevent the cause, even if the natural order breaks."
-    ]
-  }
+{
+title:"The Inheritance",
+context:"You’ve uncovered forbidden knowledge that reveals how and when people will die.",
+answers:[
+{ text:"Destroy it.", house:"hufflepuff", trait:"You reject power that harms your peace." },
+{ text:"Keep it.", house:"ravenclaw", trait:"You endure discomfort for understanding." },
+{ text:"Use or sell it.", house:"slytherin", trait:"You see knowledge as leverage." }
+]
+},
+{
+title:"The Scapegoat",
+context:"One innocent life could save an entire city.",
+answers:[
+{ text:"Refuse.", house:"hufflepuff", trait:"You draw moral lines even in collapse." },
+{ text:"Sacrifice them.", house:"slytherin", trait:"You prioritize outcomes over innocence." },
+{ text:"Find another way.", house:"gryffindor", trait:"You challenge impossible odds." }
+]
+},
+{
+title:"The Mirror",
+context:"You face a version of yourself without limits.",
+answers:[
+{ text:"Disgust.", house:"gryffindor", trait:"You value restraint." },
+{ text:"Curiosity.", house:"ravenclaw", trait:"You analyze even darkness." },
+{ text:"Envy.", house:"slytherin", trait:"You admire freedom over morality." }
+]
+},
+{
+title:"The Silence",
+context:"You can erase one truth from history.",
+answers:[
+{ text:"A personal trauma.", house:"hufflepuff", trait:"You protect emotional survival." },
+{ text:"A dangerous discovery.", house:"ravenclaw", trait:"You control information for stability." },
+{ text:"A political truth.", house:"slytherin", trait:"You manipulate narratives." }
+]
+},
+{
+title:"The Banquet",
+context:"You sit beside someone who could ruin you.",
+answers:[
+{ text:"Charm them.", house:"slytherin", trait:"You weaponize charisma." },
+{ text:"Observe.", house:"ravenclaw", trait:"You gather data before acting." },
+{ text:"Confront them.", house:"gryffindor", trait:"You face threats directly." }
+]
+},
+{
+title:"The Pedestal",
+context:"Someone you love committed a crime.",
+answers:[
+{ text:"Protect them.", house:"hufflepuff", trait:"You value loyalty above law." },
+{ text:"Turn them in.", house:"gryffindor", trait:"You uphold principles over comfort." },
+{ text:"Leverage it.", house:"slytherin", trait:"You turn guilt into control." }
+]
+}
 ];
 
-// Duplicate pattern to reach 15
+// Duplicate to reach 15
 while (questions.length < 15) {
-  questions.push(JSON.parse(JSON.stringify(questions[0])));
+questions.push(JSON.parse(JSON.stringify(questions[questions.length % 6])));
 }
 
-const houseMap = [
-  ["hufflepuff","slytherin","ravenclaw"],
-  ["hufflepuff","gryffindor","slytherin"],
-  ["gryffindor","hufflepuff","ravenclaw"]
-];
-
-const quiz = document.getElementById("quiz");
+const quiz=document.getElementById("quiz");
 
 questions.forEach((q,i)=>{
-  const map = houseMap[i % 3];
-  quiz.innerHTML += `
-    <div class="question">
-      <p><strong>${i+1}. ${q.title}</strong></p>
-      <p class="context">${q.context}</p>
-      <div class="options">
-        <label><input type="radio" name="q${i}" value="${map[0]}"> ${q.answers[0]}</label>
-        <label><input type="radio" name="q${i}" value="${map[1]}"> ${q.answers[1]}</label>
-        <label><input type="radio" name="q${i}" value="${map[2]}"> ${q.answers[2]}</label>
-      </div>
-    </div>
-  `;
+quiz.innerHTML+=`
+<div class="question">
+<strong>${i+1}. ${q.title}</strong>
+<p class="context" id="ctx${i}"></p>
+${q.answers.map(a=>`
+<label><input type="radio" name="q${i}" value="${a.house}" data-trait="${a.trait}"> ${a.text}</label>
+`).join("")}
+</div>`;
+typeText(q.context, document.getElementById(`ctx${i}`));
 });
 
-function beginSorting() {
-  const checked = document.querySelectorAll("input:checked");
-  if (checked.length < 15) {
-    alert("The hat has not finished reading you.");
-    return;
-  }
-  document.getElementById("quizPage").style.display = "none";
-  document.getElementById("thinking").style.display = "block";
-  setTimeout(() => sortHouse(checked), 3500);
+function typeText(text, el){
+let i=0;
+const interval=setInterval(()=>{
+el.innerText+=text.charAt(i);
+i++;
+if(i>=text.length) clearInterval(interval);
+},18);
 }
 
-function sortHouse(checked) {
-  const score = {gryffindor:0,ravenclaw:0,hufflepuff:0,slytherin:0};
-  checked.forEach(a => score[a.value]++);
-  const house = Object.keys(score).reduce((a,b)=>score[a]>=score[b]?a:b);
+function beginSorting(){
+const checked=document.querySelectorAll("input:checked");
+if(checked.length<15){alert("The hat is not finished.");return;}
 
-  const data = {
-    gryffindor:{
-      emoji:"🦁",
-      name:"GRYFFINDOR",
-      desc:[
-        "You act first when others hesitate.",
-        "Fear does not stop you—it clarifies you.",
-        "You accept consequences if they align with your values.",
-        "You believe courage redeems mistakes.",
-        "You would rather fail loudly than survive quietly.",
-        "You protect even when it costs you.",
-        "You despise moral cowardice.",
-        "You trust instinct over calculation.",
-        "You believe action defines character.",
-        "You are drawn to impossible odds.",
-        "You tolerate pain if it serves meaning.",
-        "You would die for something real.",
-        "You value honor over survival.",
-        "You forgive yourself faster than others.",
-        "You inspire through presence, not planning.",
-        "You fear becoming passive.",
-        "You respect strength—even in enemies.",
-        "You struggle with restraint.",
-        "You would rather be wrong than silent.",
-        "Your bravery is instinctive, not performative."
-      ]
-    },
-    ravenclaw:{
-      emoji:"🦅",
-      name:"RAVENCLAW",
-      desc:[
-        "You observe before you act.",
-        "You value understanding over approval.",
-        "You detach to see clearly.",
-        "You accept loneliness as the price of insight.",
-        "You question narratives others accept.",
-        "You seek patterns in chaos.",
-        "You distrust emotional shortcuts.",
-        "You would sacrifice comfort for clarity.",
-        "You believe truth matters more than peace.",
-        "You intellectualize fear.",
-        "You see morality as complex, not absolute.",
-        "You plan several steps ahead.",
-        "You value precision in thought.",
-        "You fear ignorance more than death.",
-        "You keep parts of yourself inaccessible.",
-        "You prefer depth over popularity.",
-        "You would rather be right than liked.",
-        "You see power in knowledge.",
-        "You analyze even your own emotions.",
-        "You live in questions more than answers."
-      ]
-    },
-    hufflepuff:{
-      emoji:"🦡",
-      name:"HUFFLEPUFF",
-      desc:[
-        "You endure when others abandon.",
-        "You believe loyalty is sacred.",
-        "You value fairness even when unseen.",
-        "You resist cruelty instinctively.",
-        "You protect the vulnerable.",
-        "You accept slow progress.",
-        "You carry emotional burdens quietly.",
-        "You believe effort has moral weight.",
-        "You forgive more than you should.",
-        "You fear becoming heartless.",
-        "You value trust over control.",
-        "You choose community over power.",
-        "You act without expecting credit.",
-        "You believe goodness is a discipline.",
-        "You are stronger than you appear.",
-        "You resist corruption through consistency.",
-        "You value emotional truth.",
-        "You hate unnecessary harm.",
-        "You stay when it’s hardest.",
-        "You define strength as persistence."
-      ]
-    },
-    slytherin:{
-      emoji:"🐍",
-      name:"SLYTHERIN",
-      desc:[
-        "You think in leverage and outcomes.",
-        "You value ambition unapologetically.",
-        "You see morality as negotiable.",
-        "You understand power dynamics intuitively.",
-        "You would rather control than hope.",
-        "You prepare for betrayal.",
-        "You believe intention matters less than results.",
-        "You adapt quickly.",
-        "You use fear strategically.",
-        "You hide your true self carefully.",
-        "You respect competence.",
-        "You are patient with long games.",
-        "You don’t fear being misunderstood.",
-        "You value survival and dominance.",
-        "You see emotions as tools.",
-        "You accept moral gray areas.",
-        "You would rather rule than be ruled.",
-        "You fear vulnerability.",
-        "You justify necessary cruelty.",
-        "You believe the world rewards the cunning."
-      ]
-    }
-  };
+let dark=0, soft=0;
+checked.forEach(c=>{
+if(c.value==="slytherin") dark++;
+if(c.value==="hufflepuff") soft++;
+});
 
-  document.getElementById("thinking").style.display = "none";
-  document.getElementById("resultPage").style.display = "block";
-  document.getElementById("houseEmoji").innerText = data[house].emoji;
-  document.getElementById("houseName").innerText = data[house].name;
-  document.getElementById("houseDesc").innerHTML =
-    "<ul>" + data[house].desc.map(d=>`<li>${d}</li>`).join("") + "</ul>";
+document.getElementById("quizPage").style.display="none";
+document.getElementById("thinking").style.display="block";
+
+document.getElementById("thinkingText").innerText =
+dark>soft
+? "Your thoughts coil tightly… ambition presses forward."
+: "The hat feels hesitation… empathy weighs heavy.";
+
+setTimeout(()=>sortHouse(checked),3000);
 }
 
-function resetTest() {
-  document.getElementById("resultPage").style.display = "none";
-  document.getElementById("quizPage").style.display = "block";
-  document.getElementById("quiz").reset();
-  window.scrollTo(0,0);
+function sortHouse(checked){
+const score={gryffindor:0,ravenclaw:0,hufflepuff:0,slytherin:0};
+let traits=[];
+
+checked.forEach(c=>{
+score[c.value]++;
+traits.push(c.dataset.trait);
+});
+
+const total=checked.length;
+const house=Object.keys(score).reduce((a,b)=>score[a]>=score[b]?a:b);
+
+const emoji={gryffindor:"🦁",ravenclaw:"🦅",hufflepuff:"🦡",slytherin:"🐍"};
+
+document.getElementById("thinking").style.display="none";
+document.getElementById("resultPage").style.display="block";
+document.getElementById("houseEmoji").innerText=emoji[house];
+document.getElementById("houseName").innerText=house.toUpperCase();
+
+document.getElementById("percentages").innerHTML=
+Object.keys(score).map(h=>`${emoji[h]} ${h}: ${Math.round(score[h]/total*100)}%`).join("<br>");
+
+document.getElementById("houseDesc").innerHTML=
+"<ul>"+traits.slice(0,20).map(t=>`<li>${t}</li>`).join("")+"</ul>";
+}
+
+function resetTest(){
+document.getElementById("resultPage").style.display="none";
+document.getElementById("quizPage").style.display="block";
+document.getElementById("quiz").reset();
+window.scrollTo(0,0);
 }
 </script>
 
