@@ -1,152 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>The Sorting Hat</title>
-  <style>
-    body {
-      background: #0e0e0e;
-      color: #f5f5f5;
-      font-family: "Georgia", serif;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      letter-spacing: 2px;
-    }
-    .question {
-      margin-bottom: 25px;
-    }
-    .options label {
-      display: block;
-      margin: 6px 0;
-      cursor: pointer;
-    }
-    button {
-      display: block;
-      margin: 40px auto;
-      padding: 12px 24px;
-      font-size: 16px;
-      background: #6b4eff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #563bd1;
-    }
-    #result {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 22px;
-      display: none;
-    }
-  </style>
-</head>
-<body>
+<meta charset="UTF-8">
+<title>The Sorting Hat</title>
 
-<h1>🧢 The Sorting Hat</h1>
-<p style="text-align:center;">Answer honestly. The hat sees all.</p>
+<style>
+body {
+  margin: 0;
+  font-family: "Georgia", serif;
+  background: url("https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d") no-repeat center center fixed;
+  background-size: cover;
+  color: #f2f2f2;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.85);
+  min-height: 100vh;
+  padding: 30px;
+}
+
+h1 {
+  text-align: center;
+  letter-spacing: 3px;
+}
+
+.question {
+  margin: 30px auto;
+  max-width: 800px;
+  padding: 20px;
+  background: rgba(30,30,30,0.9);
+  border-radius: 8px;
+}
+
+.options label {
+  display: block;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+button {
+  display: block;
+  margin: 40px auto;
+  padding: 14px 30px;
+  font-size: 18px;
+  background: #7b5cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5f45cc;
+}
+
+#result {
+  display: none;
+  text-align: center;
+  margin-top: 60px;
+}
+
+#result img {
+  width: 180px;
+  margin-top: 20px;
+}
+
+.credit {
+  margin-top: 50px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<h1>🧢 THE SORTING HAT</h1>
+<p style="text-align:center;">Answer honestly. The hat listens when you don’t.</p>
 
 <form id="quiz">
 
-  <!-- Question 1 -->
-  <div class="question">
-    <p><strong>1. What are your thoughts on murder?</strong></p>
-    <div class="options">
-      <label><input type="radio" name="q1" value="gryffindor"> Unforgivable, no matter the reason</label>
-      <label><input type="radio" name="q1" value="ravenclaw"> Morally complex; context matters</label>
-      <label><input type="radio" name="q1" value="hufflepuff"> Wrong, but I’d protect loved ones</label>
-      <label><input type="radio" name="q1" value="slytherin"> Sometimes necessary</label>
-    </div>
-  </div>
+<script>
+const questions = [
+  "What are your thoughts on murder?",
+  "Power without accountability is...",
+  "If loyalty conflicts with ambition, you choose...",
+  "You find out someone betrayed you.",
+  "Rules exist to be...",
+  "You are offered forbidden knowledge.",
+  "What scares you most?",
+  "If someone stands in your way...",
+  "Your greatest strength is...",
+  "You value reputation or truth?",
+  "Would you sacrifice one to save many?",
+  "People are mostly...",
+  "How do you react to humiliation?",
+  "If you lose everything, you...",
+  "Deep down, you want to be remembered as..."
+];
 
-  <!-- Question 2 -->
-  <div class="question">
-    <p><strong>2. You find a diary that can ruin someone’s life.</strong></p>
-    <div class="options">
-      <label><input type="radio" name="q2" value="gryffindor"> Destroy it</label>
-      <label><input type="radio" name="q2" value="ravenclaw"> Read it first</label>
-      <label><input type="radio" name="q2" value="hufflepuff"> Protect it, never use it</label>
-      <label><input type="radio" name="q2" value="slytherin"> Save it for later</label>
-    </div>
-  </div>
+const answers = [
+  ["Unforgivable", "Context matters", "Protect loved ones", "Sometimes necessary"],
+  ["Dangerous", "Inevitable", "Cruel", "Essential"],
+  ["Loyalty", "Balance", "Loyalty always", "Ambition"],
+  ["Confront them", "Analyze quietly", "Forgive", "Plot revenge"],
+  ["Broken", "Necessary", "Protective", "Tools"],
+  ["Refuse it", "Study it", "Lock it away", "Use it"],
+  ["Being powerless", "Being wrong", "Being alone", "Being forgotten"],
+  ["Face them", "Outthink them", "Avoid conflict", "Remove them"],
+  ["Bravery", "Intellect", "Compassion", "Ambition"],
+  ["Truth", "Truth", "Reputation", "Reputation"],
+  ["No", "Depends", "Yes, painfully", "Yes"],
+  ["Good", "Neutral", "Good-hearted", "Selfish"],
+  ["Confront", "Strategize", "Endure", "Retaliate"],
+  ["Rebuild", "Learn", "Lean on others", "Rise stronger"],
+  ["Brave", "Wise", "Kind", "Powerful"]
+];
 
-  <!-- Question 3 -->
-  <div class="question">
-    <p><strong>3. Which would you rather be?</strong></p>
-    <div class="options">
-      <label><input type="radio" name="q3" value="gryffindor"> Feared</label>
-      <label><input type="radio" name="q3" value="ravenclaw"> Remembered for intelligence</label>
-      <label><input type="radio" name="q3" value="hufflepuff"> Remembered for kindness</label>
-      <label><input type="radio" name="q3" value="slytherin"> Feared and respected</label>
-    </div>
-  </div>
+const houses = ["gryffindor","ravenclaw","hufflepuff","slytherin"];
 
-  <!-- Question 4 -->
-  <div class="question">
-    <p><strong>4. Someone humiliates you publicly.</strong></p>
-    <div class="options">
-      <label><input type="radio" name="q4" value="gryffindor"> Confront them</label>
-      <label><input type="radio" name="q4" value="ravenclaw"> Outsmart them later</label>
-      <label><input type="radio" name="q4" value="hufflepuff"> Walk away</label>
-      <label><input type="radio" name="q4" value="slytherin"> Make them regret it</label>
+document.write(
+  questions.map((q, i) => `
+    <div class="question">
+      <p><strong>${i+1}. ${q}</strong></p>
+      <div class="options">
+        ${answers[i].map((a,j)=>`
+          <label>
+            <input type="radio" name="q${i}" value="${houses[j]}" />
+            ${a}
+          </label>
+        `).join("")}
+      </div>
     </div>
-  </div>
+  `).join("")
+);
+</script>
 
-  <!-- Question 5 -->
-  <div class="question">
-    <p><strong>5. Deep down, what drives you?</strong></p>
-    <div class="options">
-      <label><input type="radio" name="q5" value="gryffindor"> Proving myself</label>
-      <label><input type="radio" name="q5" value="ravenclaw"> Understanding everything</label>
-      <label><input type="radio" name="q5" value="hufflepuff"> Protecting others</label>
-      <label><input type="radio" name="q5" value="slytherin"> Winning</label>
-    </div>
-  </div>
-
-  <button type="button" onclick="sortHouse()">Reveal My House</button>
+<button type="button" onclick="sortHouse()">Reveal My House</button>
 </form>
 
-<div id="result"></div>
+<div id="result">
+  <h2 id="houseName"></h2>
+  <img id="houseImg" />
+  <p id="houseDesc"></p>
+  <div class="credit">by ccarroyo</div>
+</div>
+
+</div>
 
 <script>
-  function sortHouse() {
-    const scores = {
-      gryffindor: 0,
-      ravenclaw: 0,
-      hufflepuff: 0,
-      slytherin: 0
-    };
+function sortHouse() {
+  const score = {gryffindor:0, ravenclaw:0, hufflepuff:0, slytherin:0};
+  const checked = document.querySelectorAll("input[type='radio']:checked");
 
-    const answers = document.querySelectorAll("input[type='radio']:checked");
-
-    if (answers.length < 5) {
-      alert("The Sorting Hat needs all answers...");
-      return;
-    }
-
-    answers.forEach(answer => {
-      scores[answer.value]++;
-    });
-
-    let house = Object.keys(scores).reduce((a, b) =>
-      scores[a] > scores[b] ? a : b
-    );
-
-    const descriptions = {
-      gryffindor: "🦁 Gryffindor — Bold, impulsive, and unafraid of consequences.",
-      ravenclaw: "🦅 Ravenclaw — Thoughtful, curious, and dangerously perceptive.",
-      hufflepuff: "🦡 Hufflepuff — Loyal, moral, and quietly strong.",
-      slytherin: "🐍 Slytherin — Strategic, ambitious, and unashamed of desire."
-    };
-
-    const resultDiv = document.getElementById("result");
-    resultDiv.style.display = "block";
-    resultDiv.innerHTML = `<h2>${descriptions[house]}</h2><p>The hat has decided.</p>`;
+  if (checked.length < 15) {
+    alert("The Sorting Hat requires all answers.");
+    return;
   }
+
+  checked.forEach(a => score[a.value]++);
+
+  const house = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
+
+  const data = {
+    gryffindor: {
+      name: "🦁 GRYFFINDOR",
+      img: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Gryffindor_Crest.png",
+      desc: "Bold, reckless, and ruled by courage."
+    },
+    ravenclaw: {
+      name: "🦅 RAVENCLAW",
+      img: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Ravenclaw_Crest.png",
+      desc: "Intelligent, observant, and quietly dangerous."
+    },
+    hufflepuff: {
+      name: "🦡 HUFFLEPUFF",
+      img: "https://upload.wikimedia.org/wikipedia/commons/6/62/Hufflepuff_Crest.png",
+      desc: "Loyal, moral, and stronger than people assume."
+    },
+    slytherin: {
+      name: "🐍 SLYTHERIN",
+      img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Slytherin_Crest.png",
+      desc: "Ambitious, strategic, and unafraid of desire."
+    }
+  };
+
+  document.getElementById("houseName").innerText = data[house].name;
+  document.getElementById("houseImg").src = data[house].img;
+  document.getElementById("houseDesc").innerText = data[house].desc;
+  document.getElementById("result").style.display = "block";
+}
 </script>
 
 </body>
-</html
+</html>
