@@ -11,7 +11,7 @@ h1 { text-align:center; letter-spacing:4px; }
 .question, .result-box, .followup {
   max-width:900px; margin:40px auto; padding:28px; background:#121212; border-radius:10px;
 }
-.options label { display:block; margin:12px 0; cursor:pointer; }
+.options label { display:block; text-align:left; margin:12px 0; cursor:pointer; }
 button { display:block; margin:40px auto; padding:12px 30px; font-size:16px; background:#5b4a87; border:none; color:#fff; border-radius:6px; cursor:pointer; }
 #resultPage, #followUpPage { display:none; }
 #resultPage { display:flex; align-items:center; justify-content:center; min-height:100vh; }
@@ -56,6 +56,7 @@ button { display:block; margin:40px auto; padding:12px 30px; font-size:16px; bac
 </div>
 
 <script>
+// ---------- QUESTIONS ----------
 const questions = [
 {
 title:"The Forbidden Tome",
@@ -136,9 +137,70 @@ answers:[
 {house:"ravenclaw",text:"Study its properties before deciding.",trait:"Knowledge before action."},
 {house:"gryffindor",text:"Use it immediately to prevent injustice.",trait:"Brave action first."}
 ]
+},
+{
+title:"The Phantom Ship",
+context:"A ghostly ship offers to grant your deepest desire at a cost.",
+answers:[
+{house:"gryffindor",text:"Refuse; risk is too high.",trait:"Courage guided by ethics."},
+{house:"ravenclaw",text:"Study the terms carefully before deciding.",trait:"Curiosity rules your decisions."},
+{house:"hufflepuff",text:"Ignore it; others might be harmed.",trait:"Compassion is your guide."},
+{house:"slytherin",text:"Accept the deal; strategy is worth the cost.",trait:"Ambition drives your choice."}
+]
+},
+{
+title:"The Betrayal Test",
+context:"You find out a friend has been secretly working against your group.",
+answers:[
+{house:"gryffindor",text:"Confront them directly.",trait:"Honesty and bravery matter most."},
+{house:"ravenclaw",text:"Analyze motives and consequences.",trait:"Logic first, emotion second."},
+{house:"hufflepuff",text:"Forgive and protect them.",trait:"Loyalty over suspicion."},
+{house:"slytherin",text:"Use this knowledge to gain advantage.",trait:"Strategic thinking dominates."}
+]
+},
+{
+title:"The Crystal Labyrinth",
+context:"A maze promises wisdom or power, but at personal risk.",
+answers:[
+{house:"ravenclaw",text:"Explore carefully to learn all secrets.",trait:"Knowledge guides you."},
+{house:"gryffindor",text:"Charge boldly through danger.",trait:"Bravery above caution."},
+{house:"hufflepuff",text:"Ensure no one gets hurt before you enter.",trait:"Compassion first."},
+{house:"slytherin",text:"Navigate to maximize gain.",trait:"Strategic ambition rules you."}
+]
+},
+{
+title:"The Mirror of Fates",
+context:"A mirror shows your potential future outcomes.",
+answers:[
+{house:"gryffindor",text:"Focus on the future you can shape with courage.",trait:"Bravery motivates action."},
+{house:"ravenclaw",text:"Analyze all possibilities to choose wisely.",trait:"Logic drives your choices."},
+{house:"hufflepuff",text:"See how to help loved ones.",trait:"Empathy defines decisions."},
+{house:"slytherin",text:"Pick the outcome that maximizes influence.",trait:"Ambition guides decisions."}
+]
+},
+{
+title:"The Enchanted Tournament",
+context:"You are chosen to represent your school in dangerous magical trials.",
+answers:[
+{house:"gryffindor",text:"Compete to prove your courage.",trait:"Bravery drives you."},
+{house:"ravenclaw",text:"Compete strategically and intelligently.",trait:"Logic rules your actions."},
+{house:"hufflepuff",text:"Compete to help your friends.",trait:"Compassion motivates you."},
+{house:"slytherin",text:"Compete to win by any means.",trait:"Ambition fuels your success."}
+]
+},
+{
+title:"The Forbidden Alliance",
+context:"Two rival houses offer you power if you betray your own.",
+answers:[
+{house:"slytherin",text:"Accept strategically if it benefits long-term goals.",trait:"Cunning shapes your choices."},
+{house:"gryffindor",text:"Refuse on principle.",trait:"Bravery defines your honor."},
+{house:"ravenclaw",text:"Weigh options logically before deciding.",trait:"Analysis rules your decision."},
+{house:"hufflepuff",text:"Refuse to hurt anyone.",trait:"Compassion over ambition."}
+]
 }
 ];
 
+// ---------- QUIZ RENDER ----------
 function shuffle(a){return a.map(v=>({v, r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v);}
 const quiz=document.getElementById("quiz");
 questions.forEach((q,i)=>{
@@ -149,7 +211,7 @@ ${a.text}
 </label>`).join("")}</div>`;
 });
 
-/* ---------- SORTING ---------- */
+// ---------- SORTING ----------
 let finalScore, finalTraits, conflictPair;
 function beginSorting(){
 const checked=[...document.querySelectorAll("input:checked")];
@@ -164,15 +226,13 @@ if(sorted[0][1]===sorted[1][1]){conflictPair=[sorted[0][0],sorted[1][0]]; showFo
 else{showResult();}
 }
 
-/* ---------- FOLLOW-UP ---------- */
+// ---------- FOLLOW-UP ----------
 function showFollowUp(){
 document.getElementById("followUpPage").style.display="block";
 document.getElementById("conflictText").innerText=`The hat senses tension between ${conflictPair[0]} and ${conflictPair[1]}. One final question:`;
 document.getElementById("followUpForm").innerHTML=`
-<label><input type="radio" name="f" value="${conflictPair[0]}">
-I trust my instincts.</label>
-<label><input type="radio" name="f" value="${conflictPair[1]}">
-I trust calculated outcomes.</label>`;
+<label><input type="radio" name="f" value="${conflictPair[0]}"> I trust my instincts.</label>
+<label><input type="radio" name="f" value="${conflictPair[1]}"> I trust calculated outcomes.</label>`;
 }
 function resolveConflict(){
 const choice=document.querySelector('input[name="f"]:checked');
@@ -182,33 +242,29 @@ document.getElementById("followUpPage").style.display="none";
 showResult();
 }
 
-/* ---------- RESULT ---------- */
+// ---------- RESULT ----------
 function showResult(){
 document.getElementById("resultPage").style.display="flex";
 const sorted=Object.entries(finalScore).sort((a,b)=>b[1]-a[1]);
 const primary=sorted[0][0]; const secondary=sorted[1][0];
 const emoji={gryffindor:"🦁",ravenclaw:"🦅",hufflepuff:"🦡",slytherin:"🐍"};
 document.getElementById("houseEmoji").innerText=emoji[primary];
-document.getElementById("houseName").innerHTML=
-`${primary.toUpperCase()}<br><small>Secondary: ${secondary}</small>`;
-document.getElementById("percentages").innerHTML=
-sorted.map(h=>`${emoji[h[0]]} ${h[0]}: ${Math.round(h[1]/questions.length*100)}%`).join("<br>");
+document.getElementById("houseName").innerHTML=`${primary.toUpperCase()}<br><small>Secondary: ${secondary}</small>`;
+document.getElementById("percentages").innerHTML=sorted.map(h=>`${emoji[h[0]]} ${h[0]}: ${Math.round(h[1]/questions.length*100)}%`).join("<br>");
 const dark = finalScore.slytherin >= Math.ceil(questions.length*0.5);
 const personality=`You are shaped primarily by ${primary}, guiding how you act under pressure.
 ${secondary !== primary ? `Your ${secondary} influence complicates your decisions.` : ""}
 ${dark ? "You are willing to cross lines for control." : "You maintain internal limits, even when tempted."}`;
 document.getElementById("personality").innerText=personality;
-document.getElementById("traits").innerHTML=
-finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
+document.getElementById("traits").innerHTML=finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
 
-/* certificate */
+// certificate
 document.getElementById("certHouse").innerText=`${emoji[primary]} ${primary.toUpperCase()}`;
 document.getElementById("certPersonality").innerText=personality;
-document.getElementById("certTraits").innerHTML=
-finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
+document.getElementById("certTraits").innerHTML=finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
 }
 
-/* ---------- CERTIFICATE ---------- */
+// ---------- CERTIFICATE ----------
 function printCertificate(){
 document.getElementById("certificate").style.display="block";
 window.print();
@@ -216,4 +272,4 @@ document.getElementById("certificate").style.display="none";
 }
 </script>
 </body>
-</html>
+</html
