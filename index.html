@@ -3,71 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <title>The Sorting Hat</title>
-
 <style>
-body {
-  margin: 0;
-  font-family: Georgia, serif;
-  background: #0b0b0b;
-  color: #eee;
-}
-.overlay {
-  min-height: 100vh;
-  padding: 40px;
-}
-h1 { text-align: center; letter-spacing: 4px; }
+body { margin:0; font-family: Georgia, serif; background:#0b0b0b; color:#eee; }
+.overlay { min-height:100vh; padding:40px; }
+h1 { text-align:center; letter-spacing:4px; }
 
 .question, .result-box, .followup {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 28px;
-  background: #121212;
-  border-radius: 10px;
+  max-width:900px; margin:40px auto; padding:28px; background:#121212; border-radius:10px;
 }
-
-.options label {
-  display: block;
-  margin: 12px 0;
-  cursor: pointer;
-}
-
-button {
-  display: block;
-  margin: 40px auto;
-  padding: 12px 30px;
-  font-size: 16px;
-  background: #5b4a87;
-  border: none;
-  color: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-#resultPage, #followUpPage { display: none; }
-
-#resultPage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-#houseEmoji { font-size: 90px; text-align: center; }
-#houseName { font-size: 40px; text-align: center; }
-
-#certificate {
-  display: none;
-  background: #f5f1e8;
-  color: #000;
-  padding: 50px;
-  font-family: "Times New Roman", serif;
-}
+.options label { display:block; margin:12px 0; cursor:pointer; }
+button { display:block; margin:40px auto; padding:12px 30px; font-size:16px; background:#5b4a87; border:none; color:#fff; border-radius:6px; cursor:pointer; }
+#resultPage, #followUpPage { display:none; }
+#resultPage { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+#houseEmoji { font-size:90px; text-align:center; }
+#houseName { font-size:40px; text-align:center; }
+#certificate { display:none; background:#f5f1e8; color:#000; padding:50px; font-family:"Times New Roman", serif; }
 </style>
 </head>
-
 <body>
 <div class="overlay">
-
 <h1>🧢 THE SORTING HAT</h1>
 
 <form id="quiz"></form>
@@ -101,103 +55,128 @@ button {
 <p style="margin-top:40px;text-align:center">— The Sorting Hat</p>
 </div>
 
-</div>
-
 <script>
-/* ---------- QUESTIONS ---------- */
 const questions = [
 {
-title:"Power & Truth",
-context:"You uncover a truth that could destabilize society.",
+title:"The Forbidden Tome",
+context:"You find a magical book that can amplify any power but may corrupt.",
 answers:[
-{house:"gryffindor",text:"Reveal it publicly.",trait:"You confront chaos head-on."},
-{house:"ravenclaw",text:"Study consequences first.",trait:"You value informed decisions."},
-{house:"hufflepuff",text:"Protect people from harm.",trait:"You prioritize emotional safety."},
-{house:"slytherin",text:"Use it strategically.",trait:"You weaponize information."}
+{house:"gryffindor",text:"Destroy it; power must be earned, not stolen.",trait:"Bravery and moral courage guide you."},
+{house:"ravenclaw",text:"Study it meticulously to understand its secrets.",trait:"You crave knowledge above all."},
+{house:"hufflepuff",text:"Hide it to keep others safe.",trait:"Compassion and loyalty shape your choices."},
+{house:"slytherin",text:"Use it to gain advantage.",trait:"Ambition and cunning drive you."}
 ]
 },
 {
-title:"Leadership",
-context:"People follow you, but distrust your motives.",
+title:"The Vanishing Village",
+context:"A village is trapped in an enchantment causing endless misery.",
 answers:[
-{house:"hufflepuff",text:"Earn trust slowly.",trait:"You lead with patience."},
-{house:"slytherin",text:"Control outcomes regardless.",trait:"You accept being feared."},
-{house:"ravenclaw",text:"Rebuild systems.",trait:"You believe structure fixes chaos."},
-{house:"gryffindor",text:"Prove yourself through action.",trait:"You inspire through bravery."}
+{house:"hufflepuff",text:"Help them quietly, everyone deserves kindness.",trait:"Selfless aid is your instinct."},
+{house:"slytherin",text:"Negotiate leverage with the enchanter.",trait:"You prefer strategic solutions."},
+{house:"ravenclaw",text:"Research the enchantment before acting.",trait:"Logic dictates your first step."},
+{house:"gryffindor",text:"Rush in to break the curse immediately.",trait:"Courage fuels your immediate action."}
+]
+},
+{
+title:"The Moral Dilemma",
+context:"A friend committed a crime to save someone’s life.",
+answers:[
+{house:"gryffindor",text:"Confront them and insist on facing justice.",trait:"Honesty and bravery govern your morals."},
+{house:"ravenclaw",text:"Analyze the situation for the greater good.",trait:"Logic weighs every decision."},
+{house:"hufflepuff",text:"Protect them; loyalty matters most.",trait:"You value relationships and trust."},
+{house:"slytherin",text:"Keep the secret to gain influence.",trait:"Pragmatism and cunning guide you."}
+]
+},
+{
+title:"The Shadow Duel",
+context:"You can defeat a dangerous opponent by risking innocent bystanders.",
+answers:[
+{house:"gryffindor",text:"Fight openly and risk yourself, not innocents.",trait:"Courage with honor defines you."},
+{house:"ravenclaw",text:"Calculate the probability of success and minimize harm.",trait:"Analytical thinking prevails."},
+{house:"hufflepuff",text:"Avoid the fight; protect everyone.",trait:"Compassion is your priority."},
+{house:"slytherin",text:"Exploit the situation to achieve victory.",trait:"Strategic ambition dominates your choices."}
+]
+},
+{
+title:"The Lost Artifact",
+context:"A powerful artifact lies unclaimed, but many want it.",
+answers:[
+{house:"ravenclaw",text:"Study it to understand its true value.",trait:"Knowledge is the highest reward."},
+{house:"gryffindor",text:"Seize it before others misuse it.",trait:"Courage and quick action define you."},
+{house:"hufflepuff",text:"Guard it until the rightful owner is found.",trait:"Loyalty and fairness guide you."},
+{house:"slytherin",text:"Claim it and use it to your advantage.",trait:"Ambition drives your strategy."}
+]
+},
+{
+title:"The Whispering Forest",
+context:"A forest whispers secrets that could destroy or save kingdoms.",
+answers:[
+{house:"slytherin",text:"Use the whispers to gain power.",trait:"Strategic cunning is your tool."},
+{house:"hufflepuff",text:"Ignore them to protect the vulnerable.",trait:"You protect before you act."},
+{house:"ravenclaw",text:"Decode and understand them fully.",trait:"Knowledge above fear is your path."},
+{house:"gryffindor",text:"Venture boldly to confront whatever lies ahead.",trait:"Bravery guides your steps."}
+]
+},
+{
+title:"The Forgotten Prisoner",
+context:"You can free a prisoner who may have caused great harm.",
+answers:[
+{house:"gryffindor",text:"Release them, believing in redemption.",trait:"Courage with compassion defines you."},
+{house:"ravenclaw",text:"Investigate the consequences first.",trait:"Logic over emotion."},
+{house:"hufflepuff",text:"Protect the innocent by keeping them confined.",trait:"Safety first."},
+{house:"slytherin",text:"Release them to gain leverage.",trait:"Pragmatism and manipulation guide you."}
+]
+},
+{
+title:"The Final Key",
+context:"A key can unlock any door, even forbidden ones.",
+answers:[
+{house:"hufflepuff",text:"Keep it safe for everyone.",trait:"You protect rather than exploit."},
+{house:"slytherin",text:"Use it to secure power.",trait:"Ambition guides your actions."},
+{house:"ravenclaw",text:"Study its properties before deciding.",trait:"Knowledge before action."},
+{house:"gryffindor",text:"Use it immediately to prevent injustice.",trait:"Brave action first."}
 ]
 }
 ];
 
-// clone to reach 10+
-while (questions.length < 12) {
-questions.push(JSON.parse(JSON.stringify(questions[questions.length % 2])));
-}
-
-function shuffle(a){
-return a.map(v=>({v, r:Math.random()}))
-.sort((a,b)=>a.r-b.r)
-.map(x=>x.v);
-}
-
-/* ---------- RENDER QUIZ ---------- */
+function shuffle(a){return a.map(v=>({v, r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v);}
 const quiz=document.getElementById("quiz");
 questions.forEach((q,i)=>{
-quiz.innerHTML+=`
-<div class="question">
-<strong>${i+1}. ${q.title}</strong>
-<p>${q.context}</p>
-${shuffle(q.answers).map(a=>`
+quiz.innerHTML+=`<div class="question"><strong>${i+1}. ${q.title}</strong><p>${q.context}</p>${shuffle(q.answers).map(a=>`
 <label>
 <input type="radio" name="q${i}" value="${a.house}" data-trait="${a.trait}">
 ${a.text}
-</label>`).join("")}
-</div>`;
+</label>`).join("")}</div>`;
 });
 
 /* ---------- SORTING ---------- */
 let finalScore, finalTraits, conflictPair;
-
 function beginSorting(){
 const checked=[...document.querySelectorAll("input:checked")];
-if(checked.length<questions.length){
-alert("The hat is not finished."); return;
-}
-
+if(checked.length<questions.length){alert("The hat is not finished.");return;}
 const score={gryffindor:0,ravenclaw:0,hufflepuff:0,slytherin:0};
 const traits=[];
-checked.forEach(c=>{
-score[c.value]++; traits.push(c.dataset.trait);
-});
-
+checked.forEach(c=>{score[c.value]++; traits.push(c.dataset.trait);});
 const sorted=Object.entries(score).sort((a,b)=>b[1]-a[1]);
-finalScore=score;
-finalTraits=traits;
+finalScore=score; finalTraits=traits;
 
-if(sorted[0][1]===sorted[1][1]){
-conflictPair=[sorted[0][0],sorted[1][0]];
-showFollowUp();
-} else {
-showResult();
-}
+if(sorted[0][1]===sorted[1][1]){conflictPair=[sorted[0][0],sorted[1][0]]; showFollowUp();} 
+else{showResult();}
 }
 
 /* ---------- FOLLOW-UP ---------- */
 function showFollowUp(){
 document.getElementById("followUpPage").style.display="block";
-document.getElementById("conflictText").innerText =
-`The hat senses tension between ${conflictPair[0]} and ${conflictPair[1]}. One final question:`;
-
+document.getElementById("conflictText").innerText=`The hat senses tension between ${conflictPair[0]} and ${conflictPair[1]}. One final question:`;
 document.getElementById("followUpForm").innerHTML=`
 <label><input type="radio" name="f" value="${conflictPair[0]}">
 I trust my instincts.</label>
 <label><input type="radio" name="f" value="${conflictPair[1]}">
 I trust calculated outcomes.</label>`;
 }
-
 function resolveConflict(){
 const choice=document.querySelector('input[name="f"]:checked');
 if(!choice) return alert("Choose.");
-
 finalScore[choice.value]+=1;
 document.getElementById("followUpPage").style.display="none";
 showResult();
@@ -206,36 +185,24 @@ showResult();
 /* ---------- RESULT ---------- */
 function showResult(){
 document.getElementById("resultPage").style.display="flex";
-
 const sorted=Object.entries(finalScore).sort((a,b)=>b[1]-a[1]);
-const primary=sorted[0][0];
-const secondary=sorted[1][0];
-
+const primary=sorted[0][0]; const secondary=sorted[1][0];
 const emoji={gryffindor:"🦁",ravenclaw:"🦅",hufflepuff:"🦡",slytherin:"🐍"};
-
 document.getElementById("houseEmoji").innerText=emoji[primary];
 document.getElementById("houseName").innerHTML=
 `${primary.toUpperCase()}<br><small>Secondary: ${secondary}</small>`;
-
 document.getElementById("percentages").innerHTML=
 sorted.map(h=>`${emoji[h[0]]} ${h[0]}: ${Math.round(h[1]/questions.length*100)}%`).join("<br>");
-
 const dark = finalScore.slytherin >= Math.ceil(questions.length*0.5);
-
-const personality =
-`You are shaped primarily by ${primary}, guiding how you act under pressure.
+const personality=`You are shaped primarily by ${primary}, guiding how you act under pressure.
 ${secondary !== primary ? `Your ${secondary} influence complicates your decisions.` : ""}
-${dark ? "You are willing to cross lines for control." :
-"You maintain internal limits, even when tempted."}`;
-
+${dark ? "You are willing to cross lines for control." : "You maintain internal limits, even when tempted."}`;
 document.getElementById("personality").innerText=personality;
-
-document.getElementById("traits").innerHTML =
+document.getElementById("traits").innerHTML=
 finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
 
 /* certificate */
-document.getElementById("certHouse").innerText =
-`${emoji[primary]} ${primary.toUpperCase()}`;
+document.getElementById("certHouse").innerText=`${emoji[primary]} ${primary.toUpperCase()}`;
 document.getElementById("certPersonality").innerText=personality;
 document.getElementById("certTraits").innerHTML=
 finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
