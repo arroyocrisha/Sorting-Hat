@@ -7,228 +7,246 @@
 <style>
 body {
   margin: 0;
-  font-family: "Georgia", serif;
-  background: url("https://images.unsplash.com/photo-1506466010722-395aa2bef877") center/cover fixed;
+  font-family: Georgia, serif;
+  background: #0b0b0b;
   color: #eee;
 }
 .overlay {
-  background: rgba(0,0,0,0.94);
   min-height: 100vh;
   padding: 40px;
 }
 h1 { text-align: center; letter-spacing: 4px; }
 
-#whisper {
-  text-align: center;
-  font-style: italic;
-  opacity: 0.7;
-}
-
-.question {
+.question, .result-box, .followup {
   max-width: 900px;
-  margin: 45px auto;
+  margin: 40px auto;
   padding: 28px;
-  background: rgba(18,18,18,0.96);
+  background: #121212;
   border-radius: 10px;
 }
-.context {
-  font-size: 15px;
-  opacity: 0.9;
-  min-height: 50px;
-}
+
 .options label {
   display: block;
-  margin: 14px 0;
+  margin: 12px 0;
   cursor: pointer;
 }
 
 button {
   display: block;
-  margin: 50px auto;
-  padding: 14px 36px;
-  font-size: 18px;
+  margin: 40px auto;
+  padding: 12px 30px;
+  font-size: 16px;
   background: #5b4a87;
   border: none;
   color: #fff;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
 }
-button:hover { background: #44346b; }
 
-#thinking, #resultPage { display: none; text-align: center; }
-#houseEmoji { font-size: 90px; }
-#houseName { font-size: 42px; letter-spacing: 4px; }
-#percentages { margin: 25px 0; }
-#houseDesc { max-width: 900px; margin: auto; text-align: left; }
-.credit { margin-top: 40px; opacity: 0.6; }
+#resultPage, #followUpPage { display: none; }
+
+#resultPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#houseEmoji { font-size: 90px; text-align: center; }
+#houseName { font-size: 40px; text-align: center; }
+
+#certificate {
+  display: none;
+  background: #f5f1e8;
+  color: #000;
+  padding: 50px;
+  font-family: "Times New Roman", serif;
+}
 </style>
 </head>
 
 <body>
 <div class="overlay">
 
-<div id="quizPage">
 <h1>🧢 THE SORTING HAT</h1>
-<p id="whisper">“I am not interested in who you claim to be.”</p>
+
 <form id="quiz"></form>
 <button onclick="beginSorting()">Reveal My House</button>
-</div>
 
-<div id="thinking">
-<p id="thinkingText"></p>
+<div id="followUpPage" class="followup">
+<h2>The Hat Hesitates…</h2>
+<p id="conflictText"></p>
+<form id="followUpForm"></form>
+<button onclick="resolveConflict()">Decide</button>
 </div>
 
 <div id="resultPage">
+<div class="result-box">
 <div id="houseEmoji"></div>
 <div id="houseName"></div>
 <div id="percentages"></div>
-<div id="houseDesc"></div>
-<button onclick="resetTest()">Take the Test Again</button>
-<div class="credit">by ccarroyo</div>
+<div id="personality"></div>
+<ul id="traits"></ul>
+<button onclick="printCertificate()">📜 Export Certificate</button>
+<button onclick="location.reload()">Take Test Again</button>
+<p style="opacity:.6">by ccarroyo</p>
+</div>
+</div>
+
+<div id="certificate">
+<h1 style="text-align:center">Hogwarts Sorting Certificate</h1>
+<h2 id="certHouse" style="text-align:center"></h2>
+<p id="certPersonality"></p>
+<ul id="certTraits"></ul>
+<p style="margin-top:40px;text-align:center">— The Sorting Hat</p>
 </div>
 
 </div>
 
 <script>
+/* ---------- QUESTIONS ---------- */
 const questions = [
 {
-title:"The Inheritance",
-context:"You’ve uncovered forbidden knowledge that reveals how and when people will die.",
+title:"Power & Truth",
+context:"You uncover a truth that could destabilize society.",
 answers:[
-{ text:"Destroy it.", house:"hufflepuff", trait:"You reject power that harms your peace." },
-{ text:"Keep it.", house:"ravenclaw", trait:"You endure discomfort for understanding." },
-{ text:"Use or sell it.", house:"slytherin", trait:"You see knowledge as leverage." }
+{house:"gryffindor",text:"Reveal it publicly.",trait:"You confront chaos head-on."},
+{house:"ravenclaw",text:"Study consequences first.",trait:"You value informed decisions."},
+{house:"hufflepuff",text:"Protect people from harm.",trait:"You prioritize emotional safety."},
+{house:"slytherin",text:"Use it strategically.",trait:"You weaponize information."}
 ]
 },
 {
-title:"The Scapegoat",
-context:"One innocent life could save an entire city.",
+title:"Leadership",
+context:"People follow you, but distrust your motives.",
 answers:[
-{ text:"Refuse.", house:"hufflepuff", trait:"You draw moral lines even in collapse." },
-{ text:"Sacrifice them.", house:"slytherin", trait:"You prioritize outcomes over innocence." },
-{ text:"Find another way.", house:"gryffindor", trait:"You challenge impossible odds." }
-]
-},
-{
-title:"The Mirror",
-context:"You face a version of yourself without limits.",
-answers:[
-{ text:"Disgust.", house:"gryffindor", trait:"You value restraint." },
-{ text:"Curiosity.", house:"ravenclaw", trait:"You analyze even darkness." },
-{ text:"Envy.", house:"slytherin", trait:"You admire freedom over morality." }
-]
-},
-{
-title:"The Silence",
-context:"You can erase one truth from history.",
-answers:[
-{ text:"A personal trauma.", house:"hufflepuff", trait:"You protect emotional survival." },
-{ text:"A dangerous discovery.", house:"ravenclaw", trait:"You control information for stability." },
-{ text:"A political truth.", house:"slytherin", trait:"You manipulate narratives." }
-]
-},
-{
-title:"The Banquet",
-context:"You sit beside someone who could ruin you.",
-answers:[
-{ text:"Charm them.", house:"slytherin", trait:"You weaponize charisma." },
-{ text:"Observe.", house:"ravenclaw", trait:"You gather data before acting." },
-{ text:"Confront them.", house:"gryffindor", trait:"You face threats directly." }
-]
-},
-{
-title:"The Pedestal",
-context:"Someone you love committed a crime.",
-answers:[
-{ text:"Protect them.", house:"hufflepuff", trait:"You value loyalty above law." },
-{ text:"Turn them in.", house:"gryffindor", trait:"You uphold principles over comfort." },
-{ text:"Leverage it.", house:"slytherin", trait:"You turn guilt into control." }
+{house:"hufflepuff",text:"Earn trust slowly.",trait:"You lead with patience."},
+{house:"slytherin",text:"Control outcomes regardless.",trait:"You accept being feared."},
+{house:"ravenclaw",text:"Rebuild systems.",trait:"You believe structure fixes chaos."},
+{house:"gryffindor",text:"Prove yourself through action.",trait:"You inspire through bravery."}
 ]
 }
 ];
 
-// Duplicate to reach 15
-while (questions.length < 15) {
-questions.push(JSON.parse(JSON.stringify(questions[questions.length % 6])));
+// clone to reach 10+
+while (questions.length < 12) {
+questions.push(JSON.parse(JSON.stringify(questions[questions.length % 2])));
 }
 
-const quiz=document.getElementById("quiz");
+function shuffle(a){
+return a.map(v=>({v, r:Math.random()}))
+.sort((a,b)=>a.r-b.r)
+.map(x=>x.v);
+}
 
+/* ---------- RENDER QUIZ ---------- */
+const quiz=document.getElementById("quiz");
 questions.forEach((q,i)=>{
 quiz.innerHTML+=`
 <div class="question">
 <strong>${i+1}. ${q.title}</strong>
-<p class="context" id="ctx${i}"></p>
-${q.answers.map(a=>`
-<label><input type="radio" name="q${i}" value="${a.house}" data-trait="${a.trait}"> ${a.text}</label>
-`).join("")}
+<p>${q.context}</p>
+${shuffle(q.answers).map(a=>`
+<label>
+<input type="radio" name="q${i}" value="${a.house}" data-trait="${a.trait}">
+${a.text}
+</label>`).join("")}
 </div>`;
-typeText(q.context, document.getElementById(`ctx${i}`));
 });
 
-function typeText(text, el){
-let i=0;
-const interval=setInterval(()=>{
-el.innerText+=text.charAt(i);
-i++;
-if(i>=text.length) clearInterval(interval);
-},18);
-}
+/* ---------- SORTING ---------- */
+let finalScore, finalTraits, conflictPair;
 
 function beginSorting(){
-const checked=document.querySelectorAll("input:checked");
-if(checked.length<15){alert("The hat is not finished.");return;}
-
-let dark=0, soft=0;
-checked.forEach(c=>{
-if(c.value==="slytherin") dark++;
-if(c.value==="hufflepuff") soft++;
-});
-
-document.getElementById("quizPage").style.display="none";
-document.getElementById("thinking").style.display="block";
-
-document.getElementById("thinkingText").innerText =
-dark>soft
-? "Your thoughts coil tightly… ambition presses forward."
-: "The hat feels hesitation… empathy weighs heavy.";
-
-setTimeout(()=>sortHouse(checked),3000);
+const checked=[...document.querySelectorAll("input:checked")];
+if(checked.length<questions.length){
+alert("The hat is not finished."); return;
 }
 
-function sortHouse(checked){
 const score={gryffindor:0,ravenclaw:0,hufflepuff:0,slytherin:0};
-let traits=[];
-
+const traits=[];
 checked.forEach(c=>{
-score[c.value]++;
-traits.push(c.dataset.trait);
+score[c.value]++; traits.push(c.dataset.trait);
 });
 
-const total=checked.length;
-const house=Object.keys(score).reduce((a,b)=>score[a]>=score[b]?a:b);
+const sorted=Object.entries(score).sort((a,b)=>b[1]-a[1]);
+finalScore=score;
+finalTraits=traits;
+
+if(sorted[0][1]===sorted[1][1]){
+conflictPair=[sorted[0][0],sorted[1][0]];
+showFollowUp();
+} else {
+showResult();
+}
+}
+
+/* ---------- FOLLOW-UP ---------- */
+function showFollowUp(){
+document.getElementById("followUpPage").style.display="block";
+document.getElementById("conflictText").innerText =
+`The hat senses tension between ${conflictPair[0]} and ${conflictPair[1]}. One final question:`;
+
+document.getElementById("followUpForm").innerHTML=`
+<label><input type="radio" name="f" value="${conflictPair[0]}">
+I trust my instincts.</label>
+<label><input type="radio" name="f" value="${conflictPair[1]}">
+I trust calculated outcomes.</label>`;
+}
+
+function resolveConflict(){
+const choice=document.querySelector('input[name="f"]:checked');
+if(!choice) return alert("Choose.");
+
+finalScore[choice.value]+=1;
+document.getElementById("followUpPage").style.display="none";
+showResult();
+}
+
+/* ---------- RESULT ---------- */
+function showResult(){
+document.getElementById("resultPage").style.display="flex";
+
+const sorted=Object.entries(finalScore).sort((a,b)=>b[1]-a[1]);
+const primary=sorted[0][0];
+const secondary=sorted[1][0];
 
 const emoji={gryffindor:"🦁",ravenclaw:"🦅",hufflepuff:"🦡",slytherin:"🐍"};
 
-document.getElementById("thinking").style.display="none";
-document.getElementById("resultPage").style.display="block";
-document.getElementById("houseEmoji").innerText=emoji[house];
-document.getElementById("houseName").innerText=house.toUpperCase();
+document.getElementById("houseEmoji").innerText=emoji[primary];
+document.getElementById("houseName").innerHTML=
+`${primary.toUpperCase()}<br><small>Secondary: ${secondary}</small>`;
 
 document.getElementById("percentages").innerHTML=
-Object.keys(score).map(h=>`${emoji[h]} ${h}: ${Math.round(score[h]/total*100)}%`).join("<br>");
+sorted.map(h=>`${emoji[h[0]]} ${h[0]}: ${Math.round(h[1]/questions.length*100)}%`).join("<br>");
 
-document.getElementById("houseDesc").innerHTML=
-"<ul>"+traits.slice(0,20).map(t=>`<li>${t}</li>`).join("")+"</ul>";
+const dark = finalScore.slytherin >= Math.ceil(questions.length*0.5);
+
+const personality =
+`You are shaped primarily by ${primary}, guiding how you act under pressure.
+${secondary !== primary ? `Your ${secondary} influence complicates your decisions.` : ""}
+${dark ? "You are willing to cross lines for control." :
+"You maintain internal limits, even when tempted."}`;
+
+document.getElementById("personality").innerText=personality;
+
+document.getElementById("traits").innerHTML =
+finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
+
+/* certificate */
+document.getElementById("certHouse").innerText =
+`${emoji[primary]} ${primary.toUpperCase()}`;
+document.getElementById("certPersonality").innerText=personality;
+document.getElementById("certTraits").innerHTML=
+finalTraits.slice(0,10).map(t=>`<li>${t}</li>`).join("");
 }
 
-function resetTest(){
-document.getElementById("resultPage").style.display="none";
-document.getElementById("quizPage").style.display="block";
-document.getElementById("quiz").reset();
-window.scrollTo(0,0);
+/* ---------- CERTIFICATE ---------- */
+function printCertificate(){
+document.getElementById("certificate").style.display="block";
+window.print();
+document.getElementById("certificate").style.display="none";
 }
 </script>
-
 </body>
 </html>
