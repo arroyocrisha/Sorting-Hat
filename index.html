@@ -3,245 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Sorting Hat</title>
+    <title>The Sorting Hat | 20 Question Trial</title>
     <style>
         :root {
-            --gryffindor: #740001;
-            --ravenclaw: #0e1a40;
-            --hufflepuff: #ecb939;
+            --gryffindor: #9e0000;
+            --ravenclaw: #004a9e;
+            --hufflepuff: #e3a000;
             --slytherin: #1a472a;
-            --bg-dark: #0b0b0b;
-            --card-bg: #161616;
+            --gold: #d4af37;
+            --glass: rgba(15, 15, 15, 0.85);
         }
 
-        body { margin:0; font-family: 'Georgia', serif; background: var(--bg-dark); color:#eee; line-height: 1.6; }
-        .overlay { min-height:100vh; padding:20px; box-sizing: border-box; }
-        h1 { text-align:center; letter-spacing:6px; margin-top: 40px; color: #d4af37; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-
-        .question, .result-box, .followup {
-            max-width:700px; margin:20px auto; padding:30px; background: var(--card-bg); 
-            border-radius:12px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Georgia', serif;
+            color: #eee;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .options label { 
-            display:block; text-align:left; margin:15px 0; padding: 12px;
-            background: #1f1f1f; border-radius: 8px; cursor:pointer; transition: 0.3s;
+        /* Animated Magical Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1510218830377-4e996247732e?auto=format&fit=crop&q=80&w=2000') no-repeat center center/cover;
+            z-index: -1;
+            filter: brightness(0.4);
+            animation: zoomEffect 20s infinite alternate;
         }
-        .options label:hover { background: #2a2a2a; border-left: 4px solid #d4af37; }
-        
-        input[type="radio"] { margin-right: 15px; transform: scale(1.2); }
 
-        button { 
-            display:block; margin:30px auto; padding:15px 40px; font-size:16px; 
-            background:#5b4a87; border:none; color:#fff; border-radius:8px; 
-            cursor:pointer; font-weight: bold; transition: 0.3s;
+        @keyframes zoomEffect {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
         }
-        button:hover { background: #7a66b1; transform: translateY(-2px); }
 
-        #resultPage, #followUpPage { display:none; }
-        
-        /* Result styling */
-        .result-box { text-align: center; }
-        #houseEmoji { font-size:100px; margin-bottom: 10px; }
-        #houseName { font-size:42px; font-weight: bold; color: #d4af37; margin-bottom: 20px; }
-        #percentages { font-family: monospace; font-size: 1.1rem; margin-bottom: 20px; color: #bbb; }
-        #traits { text-align: left; columns: 2; margin-top: 20px; }
-        #traits li { margin-bottom: 8px; color: #ddd; }
+        .main-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 2px solid #333;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 650px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+            animation: fadeIn 1s ease-out;
+        }
 
-        /* Certificate Print Settings */
-        #certificate { display:none; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 15px var(--gold); margin-top: 0; }
+
+        /* Question Transition Animation */
+        .question-fade {
+            animation: slideIn 0.5s forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            color: #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: var(--gold);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #222;
+            margin-bottom: 20px;
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gold);
+            width: 0%;
+            transition: width 0.4s;
+        }
+
+        #thinking-screen, #result-page, #follow-up { display: none; }
+
+        .hat-loader {
+            font-size: 50px;
+            animation: wobble 2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        #result-emoji { font-size: 80px; }
+        .credits { margin-top: 30px; font-size: 0.8rem; color: #777; }
+
         @media print {
-            body { background: white; color: black; }
-            .overlay, #resultPage, button { display: none !important; }
-            #certificate { 
-                display:block !important; 
-                background:#f5f1e8; color:#000; padding:80px; 
-                font-family:"Times New Roman", serif; border: 15px double #333;
-                text-align: center; height: 100vh; box-sizing: border-box;
-            }
-            #certTraits { text-align: left; display: inline-block; }
+            .bg-container, .main-card, button { display: none; }
+            #cert-print { display: block !important; background: #fdf5e6; color: black; padding: 50px; height: 100vh; }
         }
     </style>
 </head>
 <body>
 
-<div class="overlay" id="main-content">
-    <h1>🧢 THE SORTING HAT</h1>
-    <form id="quiz"></form>
-    <button type="button" id="revealBtn" onclick="beginSorting()">Reveal My House</button>
-</div>
+<div class="bg-container"></div>
 
-<div id="followUpPage" class="followup">
-    <h2>The Hat Hesitates…</h2>
-    <p id="conflictText"></p>
-    <div id="followUpForm" class="options"></div>
-    <button onclick="resolveConflict()">Make My Decision</button>
-</div>
-
-<div id="resultPage">
-    <div class="result-box">
-        <div id="houseEmoji"></div>
-        <div id="houseName"></div>
-        <div id="percentages"></div>
-        <div id="personality" style="font-style: italic; margin-bottom: 20px;"></div>
-        <h3 style="border-bottom: 1px solid #444; padding-bottom: 10px;">Your Dominant Traits</h3>
-        <ul id="traits"></ul>
-        
-        <div style="margin-top: 40px;">
-            <button onclick="printCertificate()">📜 Export Certificate</button>
-            <button onclick="location.reload()" style="background: transparent; color: #888; border: 1px solid #444;">Retake Test</button>
-        </div>
-        <p style="opacity:.4; font-size: 0.8rem; margin-top: 20px;">Crafted by ccarroyo</p>
+<div class="main-card" id="quiz-container">
+    <div id="start-page">
+        <h1>THE SORTING HAT</h1>
+        <p>Twenty questions to reveal your true magical nature. Answer with your soul, not your head.</p>
+        <button class="option-btn" style="text-align: center; width: 200px; margin: 20px auto; display: block;" onclick="startQuiz()">Begin Trial</button>
+        <p class="credits">by ccarroyo</p>
     </div>
-</div>
 
-<div id="certificate">
-    <p style="font-size: 1.2rem; margin-bottom: 0;">OFFICIAL DECREE</p>
-    <h1 style="font-size: 3rem; margin-top: 10px;">Hogwarts Sorting Certificate</h1>
-    <hr>
-    <p>Be it known that the wearer of the Hat has been tested and found worthy of:</p>
-    <h2 id="certHouse" style="font-size: 4rem; color: #000; margin: 20px 0;"></h2>
-    <p id="certPersonality" style="font-size: 1.2rem; padding: 0 50px;"></p>
-    <div style="text-align: left; max-width: 400px; margin: 0 auto;">
-        <h3>Verified Virtues:</h3>
-        <ul id="certTraits"></ul>
+    <div id="quiz-page" style="display: none;">
+        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+        <p id="q-count" style="color: var(--gold); font-size: 0.9rem;"></p>
+        <h2 id="q-text" class="question-fade"></h2>
+        <div id="options" class="options-grid"></div>
     </div>
-    <p style="margin-top:80px; font-weight: bold; font-size: 1.5rem;">— Godric Gryffindor, Helga Hufflepuff, Rowena Ravenclaw, & Salazar Slytherin —</p>
+
+    <div id="thinking-screen">
+        <div class="hat-loader">🧢</div>
+        <h2>The Hat is deliberating...</h2>
+        <p>"A difficult mind to read... yes..."</p>
+    </div>
+
+    <div id="result-page">
+        <div id="result-emoji"></div>
+        <h1 id="house-title"></h1>
+        <p id="personality-text"></p>
+        <button class="option-btn" style="width: 100%; text-align: center;" onclick="location.reload()">Reset Test</button>
+        <p class="credits">by ccarroyo</p>
+    </div>
 </div>
 
 <script>
-const questions = [
-    { title:"The Forbidden Tome", context:"You find a magical book that can amplify any power but may corrupt.", answers:[
-        {house:"gryffindor",text:"Destroy it; power must be earned, not stolen.",trait:"Moral Courage"},
-        {house:"ravenclaw",text:"Study it meticulously to understand its secrets.",trait:"Intellectual Curiosity"},
-        {house:"hufflepuff",text:"Hide it to keep others safe.",trait:"Protective Loyalty"},
-        {house:"slytherin",text:"Use it to gain advantage.",trait:"Strategic Ambition"}
-    ]},
-    { title:"The Vanishing Village", context:"A village is trapped in an enchantment causing endless misery.", answers:[
-        {house:"hufflepuff",text:"Help them quietly, everyone deserves kindness.",trait:"Quiet Compassion"},
-        {house:"slytherin",text:"Negotiate leverage with the enchanter.",trait:"Pragmatic Cunning"},
-        {house:"ravenclaw",text:"Research the enchantment before acting.",trait:"Logical Analysis"},
-        {house:"gryffindor",text:"Rush in to break the curse immediately.",trait:"Bold Heroism"}
-    ]},
-    { title:"The Moral Dilemma", context:"A friend committed a crime to save someone’s life.", answers:[
-        {house:"gryffindor",text:"Confront them and insist on facing justice.",trait:"Unyielding Honesty"},
-        {house:"ravenclaw",text:"Analyze the situation for the greater good.",trait:"Rational Detachment"},
-        {house:"hufflepuff",text:"Protect them; loyalty matters most.",trait:"Unconditional Loyalty"},
-        {house:"slytherin",text:"Keep the secret to gain influence.",trait:"Resourcefulness"}
-    ]},
-    { title:"The Shadow Duel", context:"You can defeat a dangerous opponent by risking innocent bystanders.", answers:[
-        {house:"gryffindor",text:"Fight openly and risk yourself, not innocents.",trait:"Noble Sacrifice"},
-        {house:"ravenclaw",text:"Calculate probability and minimize harm.",trait:"Strategic Calculation"},
-        {house:"hufflepuff",text:"Avoid the fight; protect everyone.",trait:"Altruism"},
-        {house:"slytherin",text:"Exploit the situation to achieve victory.",trait:"Result-Oriented"}
-    ]},
-    { title:"The Whispering Forest", context:"A forest whispers secrets that could destroy or save kingdoms.", answers:[
-        {house:"slytherin",text:"Use the whispers to gain power.",trait:"Political Intuition"},
-        {house:"hufflepuff",text:"Ignore them to protect the vulnerable.",trait:"Steadfast Ethics"},
-        {house:"ravenclaw",text:"Decode and understand them fully.",trait:"Scholarly Pursuit"},
-        {house:"gryffindor",text:"Venture boldly to confront whatever lies ahead.",trait:"Fearless Exploration"}
-    ]}
-    // ... Additional questions follow the same structure
-];
+    const questions = [
+        { q: "The Forbidden Tome: You find a book that amplifies power but corrupts. You...", options: [
+            { t: "Destroy it immediately.", h: "gryffindor" }, { t: "Study its logic safely.", h: "ravenclaw" }, 
+            { t: "Hide it to protect others.", h: "hufflepuff" }, { t: "Use it to gain influence.", h: "slytherin" }
+        ]},
+        { q: "A village is trapped in a curse. Your first move?", options: [
+            { t: "Rush in to break it.", h: "gryffindor" }, { t: "Research the curse's origin.", h: "ravenclaw" }, 
+            { t: "Provide food and care to victims.", h: "hufflepuff" }, { t: "Find out who is paying to fix it.", h: "slytherin" }
+        ]},
+        { q: "A friend commits a crime for a good cause. You...", options: [
+            { t: "Insist they face justice.", h: "gryffindor" }, { t: "Evaluate the logic of the cause.", h: "ravenclaw" }, 
+            { t: "Protect their secret at any cost.", h: "hufflepuff" }, { t: "Use the secret for future leverage.", h: "slytherin" }
+        ]},
+        { q: "You can win a duel by risking an innocent. You...", options: [
+            { t: "Refuse and take the blow yourself.", h: "gryffindor" }, { t: "Calculate a 1% chance to save both.", h: "ravenclaw" }, 
+            { t: "Surrender to ensure safety.", h: "hufflepuff" }, { t: "Win. The end justifies the means.", h: "slytherin" }
+        ]},
+        { q: "What do you fear most?", options: [
+            { t: "Being called a coward.", h: "gryffindor" }, { t: "Being misunderstood or ignorant.", h: "ravenclaw" }, 
+            { t: "Losing your community.", h: "hufflepuff" }, { t: "Being powerless.", h: "slytherin" }
+        ]},
+        { q: "The Whispering Forest offers secrets. You...", options: [
+            { t: "Enter boldly to see for yourself.", h: "gryffindor" }, { t: "Bring a journal to record the truths.", h: "ravenclaw" }, 
+            { t: "Avoid it; some secrets hurt people.", h: "hufflepuff" }, { t: "Listen to gain an edge over rivals.", h: "slytherin" }
+        ]},
+        { q: "Your favorite magical tool would be...", options: [
+            { t: "A sword of legendary bravery.", h: "gryffindor" }, { t: "A diadem of infinite wisdom.", h: "ravenclaw" }, 
+            { t: "A cup that heals and provides.", h: "hufflepuff" }, { t: "A locket that commands respect.", h: "slytherin" }
+        ]},
+        { q: "How would you like to be remembered?", options: [
+            { t: "As a hero.", h: "gryffindor" }, { t: "As a genius.", h: "ravenclaw" }, 
+            { t: "As a true friend.", h: "hufflepuff" }, { t: "As a great leader.", h: "slytherin" }
+        ]},
+        { q: "A stranger is being bullied. You...", options: [
+            { t: "Step in and fight the bully.", h: "gryffindor" }, { t: "Outsmart the bully with words.", h: "ravenclaw" }, 
+            { t: "Comfort the victim first.", h: "hufflepuff" }, { t: "Wait for the best moment to intervene.", h: "slytherin" }
+        ]},
+        { q: "You find a $100 magical coin. You...", options: [
+            { t: "Buy gear for an adventure.", h: "gryffindor" }, { t: "Buy a rare, ancient book.", h: "ravenclaw" }, 
+            { t: "Treat your friends to a feast.", h: "hufflepuff" }, { t: "Invest it to grow your wealth.", h: "slytherin" }
+        ]},
+        { q: "The Mirror of Erised shows...", options: [
+            { t: "You standing atop a mountain.", h: "gryffindor" }, { t: "You mastering every spell.", h: "ravenclaw" }, 
+            { t: "Your family safe and happy.", h: "hufflepuff" }, { t: "You sitting on a throne.", h: "slytherin" }
+        ]},
+        { q: "Pick a path:", options: [
+            { t: "The dangerous, sunny trail.", h: "gryffindor" }, { t: "The quiet, winding library path.", h: "ravenclaw" }, 
+            { t: "The wide, paved common road.", h: "hufflepuff" }, { t: "The narrow, shortcut alleyway.", h: "slytherin" }
+        ]},
+        { q: "If you could change the past, you would...", options: [
+            { t: "Correct a great injustice.", h: "gryffindor" }, { t: "Learn a truth that was lost.", h: "ravenclaw" }, 
+            { t: "Prevent a friend's heartbreak.", h: "hufflepuff" }, { t: "Fix a mistake that cost you power.", h: "slytherin" }
+        ]},
+        { q: "A door is locked. You...", options: [
+            { t: "Kick it down.", h: "gryffindor" }, { t: "Find the complex counter-spell.", h: "ravenclaw" }, 
+            { t: "Knock and wait patiently.", h: "hufflepuff" }, { t: "Pick the lock secretly.", h: "slytherin" }
+        ]},
+        { q: "In a team, you are...", options: [
+            { t: "The Vanguard.", h: "gryffindor" }, { t: "The Strategist.", h: "ravenclaw" }, 
+            { t: "The Supporter.", h: "hufflepuff" }, { t: "The Captain.", h: "slytherin" }
+        ]},
+        { q: "You're late for class. You...", options: [
+            { t: "Run in and apologize loudly.", h: "gryffindor" }, { t: "Slip in and hope for no questions.", h: "ravenclaw" }, 
+            { t: "Feel guilty all day.", h: "hufflepuff" }, { t: "Blame the moving staircases.", h: "slytherin" }
+        ]},
+        { q: "A potion goes wrong. You...", options: [
+            { t: "Try to contain the explosion.", h: "gryffindor" }, { t: "Analyze the chemical error.", h: "ravenclaw" }, 
+            { t: "Help clean up the mess.", h: "hufflepuff" }, { t: "Ensure your grade isn't affected.", h: "slytherin" }
+        ]},
+        { q: "What is your best quality?", options: [
+            { t: "Bravery.", h: "gryffindor" }, { t: "Intelligence.", h: "ravenclaw" }, 
+            { t: "Kindness.", h: "hufflepuff" }, { t: "Resourcefulness.", h: "slytherin" }
+        ]},
+        { q: "You're given a task. You...", options: [
+            { t: "Dive in head-first.", h: "gryffindor" }, { t: "Make a detailed plan.", h: "ravenclaw" }, 
+            { t: "Collaborate with others.", h: "hufflepuff" }, { t: "Find the most efficient shortcut.", h: "slytherin" }
+        ]},
+        { q: "The Hat says you'd be great in Slytherin, but you want Gryffindor. You...", options: [
+            { t: "Argue for Gryffindor.", h: "gryffindor" }, { t: "Ask for the Hat's reasoning.", h: "ravenclaw" }, 
+            { t: "Go where you're needed.", h: "hufflepuff" }, { t: "Accept it; Slytherin has perks.", h: "slytherin" }
+        ]}
+    ];
 
-function shuffle(a){return a.map(v=>({v, r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v);}
+    let currentIdx = 0;
+    let scores = { gryffindor: 0, ravenclaw: 0, hufflepuff: 0, slytherin: 0 };
 
-const quizContainer = document.getElementById("quiz");
-questions.forEach((q, i) => {
-    const qDiv = document.createElement("div");
-    qDiv.className = "question";
-    qDiv.innerHTML = `<strong>${i + 1}. ${q.title}</strong><p>${q.context}</p><div class="options">
-        ${shuffle(q.answers).map(a => `
-            <label>
-                <input type="radio" name="q${i}" value="${a.house}" data-trait="${a.trait}">
-                ${a.text}
-            </label>`).join("")}
-    </div>`;
-    quizContainer.appendChild(qDiv);
-});
-
-let finalScore, finalTraits, conflictPair;
-
-function beginSorting() {
-    const checked = [...document.querySelectorAll("input:checked")];
-    if (checked.length < questions.length) {
-        alert("The Sorting Hat requires all answers before it can speak.");
-        return;
+    function startQuiz() {
+        document.getElementById('start-page').style.display = 'none';
+        document.getElementById('quiz-page').style.display = 'block';
+        showQuestion();
     }
 
-    const score = { gryffindor: 0, ravenclaw: 0, hufflepuff: 0, slytherin: 0 };
-    const allUserTraits = [];
-    
-    checked.forEach(c => {
-        score[c.value]++;
-        allUserTraits.push({house: c.value, trait: c.dataset.trait});
-    });
+    function showQuestion() {
+        if (currentIdx >= questions.length) {
+            processResults();
+            return;
+        }
+        
+        const q = questions[currentIdx];
+        document.getElementById('q-count').innerText = `TRIAL ${currentIdx + 1} OF 20`;
+        const qText = document.getElementById('q-text');
+        qText.innerText = q.q;
+        qText.classList.remove('question-fade');
+        void qText.offsetWidth; // Trigger reflow
+        qText.classList.add('question-fade');
 
-    finalScore = score;
-    finalTraits = allUserTraits;
+        document.getElementById('progress').style.width = `${(currentIdx / questions.length) * 100}%`;
 
-    const sorted = Object.entries(score).sort((a, b) => b[1] - a[1]);
-
-    if (sorted[0][1] === sorted[1][1]) {
-        conflictPair = [sorted[0][0], sorted[1][0]];
-        document.getElementById("main-content").style.display = "none";
-        showFollowUp();
-    } else {
-        showResult();
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = '';
+        
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.t;
+            btn.onclick = () => {
+                scores[opt.h]++;
+                currentIdx++;
+                showQuestion();
+            };
+            optionsDiv.appendChild(btn);
+        });
     }
-}
 
-function showFollowUp() {
-    document.getElementById("followUpPage").style.display = "block";
-    document.getElementById("conflictText").innerText = `The hat senses a dual nature within you: ${conflictPair[0]} and ${conflictPair[1]}. Choose the path that calls to you:`;
-    document.getElementById("followUpForm").innerHTML = `
-        <label><input type="radio" name="f" value="${conflictPair[0]}"> I follow my heart and my instincts.</label>
-        <label><input type="radio" name="f" value="${conflictPair[1]}"> I follow logic and the calculated path.</label>`;
-}
+    function processResults() {
+        document.getElementById('quiz-page').style.display = 'none';
+        document.getElementById('thinking-screen').style.display = 'block';
 
-function resolveConflict() {
-    const choice = document.querySelector('input[name="f"]:checked');
-    if (!choice) return alert("You must choose.");
-    finalScore[choice.value] += 0.1; // Slight nudge to break tie
-    document.getElementById("followUpPage").style.display = "none";
-    showResult();
-}
+        setTimeout(() => {
+            document.getElementById('thinking-screen').style.display = 'none';
+            document.getElementById('result-page').style.display = 'block';
+            
+            const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            const emoji = { gryffindor: "🦁", ravenclaw: "🦅", hufflepuff: "🦡", slytherin: "🐍" };
+            const profiles = {
+                gryffindor: "Your heart burns with the fire of courage. You choose the hard path because it is right.",
+                ravenclaw: "Your mind is a vast library of curiosity. You seek truth above all simple comforts.",
+                hufflepuff: "Your soul is anchored in loyalty and kindness. You are the foundation of your world.",
+                slytherin: "Your ambition is your compass. You are resourceful, cunning, and destined for greatness."
+            };
 
-function showResult() {
-    document.getElementById("main-content").style.display = "none";
-    document.getElementById("resultPage").style.display = "block";
-    
-    const sorted = Object.entries(finalScore).sort((a, b) => b[1] - a[1]);
-    const primary = sorted[0][0];
-    const secondary = sorted[1][0];
-    const emoji = { gryffindor: "🦁", ravenclaw: "🦅", hufflepuff: "🦡", slytherin: "🐍" };
-
-    document.getElementById("houseEmoji").innerText = emoji[primary];
-    document.getElementById("houseName").innerHTML = `${primary.toUpperCase()}<br><small style="font-size:15px; color:#888;">Secondary Influence: ${secondary}</small>`;
-    
-    // Percentages
-    const total = Object.values(finalScore).reduce((a, b) => a + b, 0);
-    document.getElementById("percentages").innerHTML = sorted.map(h => 
-        `${emoji[h[0]]} ${h[0].toUpperCase()}: ${Math.round((h[1] / total) * 100)}%`
-    ).join(" | ");
-
-    // Trait Filtering (Only show traits matching primary house)
-    const winningTraits = finalTraits.filter(t => t.house === primary).map(t => t.trait);
-    const traitListHTML = winningTraits.map(t => `<li>${t}</li>`).join("");
-    document.getElementById("traits").innerHTML = traitListHTML;
-
-    const personality = `You are a true ${primary}, defined by ${winningTraits.slice(0,2).join(" and ")}. While you share traits with ${secondary}, your core values align with the legacy of ${primary}.`;
-    document.getElementById("personality").innerText = personality;
-
-    // Certificate Setup
-    document.getElementById("certHouse").innerText = `${emoji[primary]} ${primary.toUpperCase()}`;
-    document.getElementById("certTraits").innerHTML = traitListHTML;
-    document.getElementById("certPersonality").innerText = personality;
-}
-
-function printCertificate() {
-    window.print();
-}
+            document.getElementById('result-emoji').innerText = emoji[winner];
+            document.getElementById('house-title').innerText = winner.toUpperCase();
+            document.getElementById('personality-text').innerText = profiles[winner];
+        }, 2500);
+    }
 </script>
 
 </body>
