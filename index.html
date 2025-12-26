@@ -9,8 +9,8 @@
 
         :root {
             --gold: #d4af37;
-            --parchment: #f5f1e8;
-            --glass: rgba(10, 10, 12, 0.9);
+            --glass: rgba(10, 10, 12, 0.92);
+            --parchment-base: #f5f1e8;
         }
 
         body, html {
@@ -26,13 +26,13 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&q=80&w=1920') no-repeat center center/cover;
             z-index: -2;
-            filter: brightness(0.5) contrast(1.1);
+            filter: brightness(0.4) contrast(1.1);
         }
 
         .overlay-vignette {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%);
             z-index: -1;
         }
 
@@ -80,7 +80,6 @@
             transform: translateX(10px);
         }
 
-        /* Results Details */
         .house-details { text-align: left; margin-top: 25px; line-height: 1.6; }
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         .detail-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid #333; }
@@ -92,21 +91,28 @@
             border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase;
         }
 
-        #thinking-screen, #result-page, #quiz-page { display: none; }
+        #thinking-screen, #result-page, #quiz-page, #cert-container { display: none; }
 
         .loader { font-size: 60px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-        /* Print/Certificate Styles */
+        /* Certificate / Parchment Look */
         @media print {
             body * { visibility: hidden; }
             #cert-container, #cert-container * { visibility: visible; }
             #cert-container { 
                 position: absolute; left: 0; top: 0; width: 100%; height: 100vh;
-                background: var(--parchment) !important; color: #111 !important;
+                background-color: #f5f1e8 !important;
+                background-image: 
+                    radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 100%),
+                    url('https://www.transparenttextures.com/patterns/papyros.png') !important;
+                color: #2c1e11 !important;
                 display: flex !important; flex-direction: column; align-items: center; justify-content: center;
-                border: 20px double #444; padding: 40px; box-sizing: border-box;
+                border: 25px double #5d4037; padding: 60px; box-sizing: border-box;
+                text-align: center;
             }
+            .cert-seal { font-size: 100px; margin-bottom: 20px; filter: sepia(1) saturate(2); }
+            #cert-house { font-size: 5rem; text-decoration: underline; color: #5d4037 !important; }
         }
     </style>
 </head>
@@ -118,8 +124,8 @@
 <div class="main-container">
     <div class="quiz-card" id="start-page">
         <h1>THE SORTING HAT</h1>
-        <p>Within these stone walls, your true nature shall be laid bare.<br>Answer the 20 ancient trials to find where you belong.</p>
-        <button class="primary-btn" style="margin-top: 20px;" onclick="startQuiz()">Begin the Ritual</button>
+        <p>In the shadow of the great towers, your truth awaits.<br>Twenty trials lie between you and your destiny.</p>
+        <button class="primary-btn" style="margin-top: 20px;" onclick="startQuiz()">Enter the Great Hall</button>
         <p style="margin-top: 40px; opacity: 0.5; font-size: 0.8rem;">by ccarroyo</p>
     </div>
 
@@ -132,57 +138,59 @@
 
     <div class="quiz-card" id="thinking-screen">
         <div class="loader">🧢</div>
-        <h2>The Hat is Deliberating...</h2>
-        <p>"A curious mind... deep roots... where to put you?"</p>
+        <h2>Analyzing your spirit...</h2>
+        <p>"Ah, a complex mind... many layers to unwrap..."</p>
     </div>
 
     <div class="quiz-card" id="result-page">
         <div id="house-emoji" style="font-size: 80px;"></div>
-        <h1 id="house-name" style="font-size: 3rem; margin: 10px 0;"></h1>
+        <h1 id="house-name" style="font-size: 3.5rem; margin: 10px 0;"></h1>
         
         <div class="house-details">
-            <p id="house-intro" style="font-style: italic; font-size: 1.2rem; text-align: center; margin-bottom: 20px;"></p>
-            
-            <div class="detail-grid">
-                <div class="detail-box"><b>Motto</b><span id="house-motto"></span></div>
-                <div class="detail-box"><b>Element</b><span id="house-element"></span></div>
-                <div class="detail-box"><b>Key Traits</b><span id="house-traits"></span></div>
-                <div class="detail-box"><b>Common Tools</b><span id="house-tools"></span></div>
+            <div class="detail-box" style="margin-bottom: 20px; border-left: 4px solid var(--gold);">
+                <b>Who You Are</b>
+                <span id="user-description" style="font-size: 1.1rem; line-height: 1.8;"></span>
             </div>
             
-            <div class="detail-box" style="margin-top: 20px;">
-                <b>Historical Legacy</b>
-                <span id="house-legacy"></span>
+            <div class="detail-grid">
+                <div class="detail-box"><b>Inner Motto</b><span id="house-motto"></span></div>
+                <div class="detail-box"><b>Elemental Force</b><span id="house-element"></span></div>
+                <div class="detail-box"><b>Signature Virtues</b><span id="house-traits"></span></div>
+                <div class="detail-box"><b>Soul Tool</b><span id="house-tools"></span></div>
             </div>
         </div>
 
         <div class="action-btns">
-            <button class="primary-btn" onclick="window.print()">Download Certificate</button>
-            <button class="primary-btn" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);" onclick="location.reload()">Reset Test</button>
+            <button class="primary-btn" onclick="window.print()">📜 Save Parchment</button>
+            <button class="primary-btn" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);" onclick="location.reload()">Reset</button>
         </div>
-        <p style="margin-top: 30px; opacity: 0.5; font-size: 0.8rem;">Certified by ccarroyo</p>
+        <p style="margin-top: 30px; opacity: 0.5; font-size: 0.8rem;">Sorted by ccarroyo</p>
     </div>
 </div>
 
-<div id="cert-container" style="display: none;">
-    <h3 style="font-family: 'MedievalSharp'; margin-bottom: 0;">OFFICIAL DECREE OF</h3>
-    <h1 style="font-size: 3.5rem; margin-top: 10px; font-family: 'Cinzel';">The Sorting Hat</h1>
-    <div style="width: 80%; height: 2px; background: #333; margin: 20px 0;"></div>
-    <p style="font-size: 1.5rem;">Be it known that the bearer has been sorted into</p>
-    <h2 id="cert-house" style="font-size: 5rem; margin: 20px 0; font-family: 'Cinzel';"></h2>
-    <p id="cert-desc" style="max-width: 600px; text-align: center; font-size: 1.2rem;"></p>
-    <p style="margin-top: 100px; font-family: 'MedievalSharp'; font-size: 1.2rem;">Signed by the Four Founders & ccarroyo</p>
+<div id="cert-container">
+    <div class="cert-seal">💠</div>
+    <h3 style="font-family: 'MedievalSharp'; margin: 0; letter-spacing: 3px;">BY DECREE OF THE FOUNDERS</h3>
+    <h1 style="font-size: 3.5rem; margin: 10px 0; font-family: 'Cinzel'; border-bottom: 2px solid #5d4037; padding-bottom: 10px;">Sorting Certificate</h1>
+    <p style="font-size: 1.6rem; font-style: italic; margin-top: 30px;">Let it be known throughout the Wizarding World that</p>
+    <p style="font-size: 1.2rem;">The Hat has weighed the soul and found them belonging to</p>
+    <h2 id="cert-house" style="font-family: 'Cinzel'; margin: 20px 0;"></h2>
+    <p id="cert-personality" style="max-width: 650px; text-align: center; font-size: 1.3rem; line-height: 1.6; border: 1px solid rgba(0,0,0,0.1); padding: 20px; background: rgba(255,255,255,0.3);"></p>
+    <div style="margin-top: 80px; font-family: 'MedievalSharp'; font-size: 1.3rem;">
+        <span>Witnessed by ccarroyo</span><br>
+        <span style="font-size: 0.9rem;">Hogwarts School of Witchcraft and Wizardry</span>
+    </div>
 </div>
 
 <script>
     const questions = [
-        { q: "You find an ancient chest that can only be opened with a drop of blood. You...", options: [
+        { q: "An ancient chest appears. It requires a drop of blood to open. You...", options: [
             { t: "Prick your finger immediately; fortune favors the bold.", h: "gryffindor" },
             { t: "Cast several diagnostic spells to ensure it isn't a trap.", h: "ravenclaw" },
             { t: "Ask your companions if they think it's worth the risk.", h: "hufflepuff" },
             { t: "Wait for someone else to open it, then claim the prize.", h: "slytherin" }
         ]},
-        { q: "A powerful wizard offers you a favor. What do you ask for?", options: [
+        { q: "A powerful wizard offers you a single favor. What do you ask for?", options: [
             { t: "The strength to defeat any enemy in battle.", h: "gryffindor" },
             { t: "The wisdom to solve the world's deepest mysteries.", h: "ravenclaw" },
             { t: "A lifetime of peace and security for your family.", h: "hufflepuff" },
@@ -335,25 +343,36 @@
             document.getElementById('result-page').style.display = 'block';
             const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
             const data = {
-                gryffindor: { emoji: "🦁", motto: "Forti Animo Estote (Be of Courage)", element: "Fire", traits: "Bravery, Nerve, Chivalry", tools: "Sword, Lion Heart", intro: "Where dwell the brave at heart!", legacy: "Founded by Godric Gryffindor, this house has produced the world's most daring heroes and defenders." },
-                ravenclaw: { emoji: "🦅", motto: "Wit Beyond Measure", element: "Air", traits: "Learning, Wit, Wisdom", tools: "Diadem, Ancient Tomes", intro: "Where those of wit and learning, will always find their kind.", legacy: "Rowena Ravenclaw prized intellectual mastery above all, creating a house of inventors and visionaries." },
-                hufflepuff: { emoji: "🦡", motto: "Labor Omnia Vincit (Hard Work Wins)", element: "Earth", traits: "Loyalty, Patience, Fair Play", tools: "Cup, Healing Herbs", intro: "Just and loyal, those patient Hufflepuffs are true and unafraid of toil.", legacy: "Helga Hufflepuff accepted all, valuing kindness and persistence. Her house is the most grounded of all." },
-                slytherin: { emoji: "🐍", motto: "Aspiration to Greatness", element: "Water", traits: "Ambition, Cunning, Resourcefulness", tools: "Locket, Silver Tongue", intro: "Those cunning folk use any means to achieve their ends.", legacy: "Salazar Slytherin valued pure ambition. His legacy is one of power, survival, and fierce pride." }
+                gryffindor: { 
+                    emoji: "🦁", motto: "Do What Is Right", element: "Fire", traits: "Courage, Chivalry, Daring", tools: "Godric's Sword",
+                    user: "You are a soul of fire and fortitude. You don't just face danger; you face it with a purpose. You lead from the front, and your presence is a shield for the weak and a challenge to the unjust."
+                },
+                ravenclaw: { 
+                    emoji: "🦅", motto: "Wit Beyond Measure", element: "Air", traits: "Intelligence, Wit, Wisdom", tools: "Rowena's Diadem",
+                    user: "You are a seeker of hidden truths. Your mind is your greatest tool, allowing you to see patterns where others see chaos. You find beauty in knowledge and possess a wisdom that guides your every step."
+                },
+                hufflepuff: { 
+                    emoji: "🦡", motto: "Fair & Faithful", element: "Earth", traits: "Loyalty, Hard Work, Kindness", tools: "Helga's Cup",
+                    user: "You are the foundation upon which trust is built. Your strength is not in loud shouts, but in quiet, unwavering persistence. You are the truest friend one could hope to find, valuing fairness above all."
+                },
+                slytherin: { 
+                    emoji: "🐍", motto: "Pride & Power", element: "Water", traits: "Ambition, Cunning, Leadership", tools: "Salazar's Locket",
+                    user: "You are a master of your own destiny. You possess the vision to see what must be done and the cunning to achieve it. You are a leader who understands that greatness requires grit, strategy, and self-belief."
+                }
             };
 
             const h = data[winner];
             document.getElementById('house-emoji').innerText = h.emoji;
             document.getElementById('house-name').innerText = winner.toUpperCase();
-            document.getElementById('house-intro').innerText = h.intro;
+            document.getElementById('user-description').innerText = h.user;
             document.getElementById('house-motto').innerText = h.motto;
             document.getElementById('house-element').innerText = h.element;
             document.getElementById('house-traits').innerText = h.traits;
             document.getElementById('house-tools').innerText = h.tools;
-            document.getElementById('house-legacy').innerText = h.legacy;
             
-            // Cert
+            // Cert Setup
             document.getElementById('cert-house').innerText = winner.toUpperCase();
-            document.getElementById('cert-desc').innerText = h.legacy;
+            document.getElementById('cert-personality').innerText = h.user;
         }, 2500);
     }
 </script>
